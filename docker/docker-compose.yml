@@ -66,7 +66,7 @@ services:
       - eshopnet
 
   mongo:
-    image: mongo:latest
+    image: mongo:4.4.6
     environment:
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=pass

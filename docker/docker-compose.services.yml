@@ -64,7 +64,7 @@ services:
     networks:
       - eshopnet
 
-  order-grace-period-task:
+  order-grace-period-task: ####
     build: ../services/order-grace-period-task
     restart: on-failure
     environment:

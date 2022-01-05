@@ -1,4 +1,5 @@
 docker/portainer-data
+docker/minio
 target/
 pom.xml.tag
 pom.xml.releaseBackup

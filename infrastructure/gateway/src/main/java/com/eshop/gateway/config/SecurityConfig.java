@@ -14,7 +14,8 @@ import reactor.core.publisher.Mono;
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
-    // By convention, OAuth 2.0 scopes should be prefixed with SCOPE_ when checked for authority using Spring Security.
+    // By convention, OAuth 2.0 scopes should be prefixed with SCOPE_ when checked
+    // for authority using Spring Security.
 
     private static final String GATEWAY_SCOPE = "SCOPE_webshoppingagg";
 
@@ -23,8 +24,7 @@ public class SecurityConfig {
 
     @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http
-                .cors()
+        http.cors()
                 .and()
                 .csrf().disable()
                 .authorizeExchange()
