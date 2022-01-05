@@ -5,13 +5,6 @@ app:
   config:
     user: cfguser
     password: cfgpassword
-  logstash:
-    host: localhost
-    port: 5044
-  kafka:
-    broker:
-      host: localhost
-      port: 9092
 
 spring:
   application:
@@ -21,26 +14,16 @@ spring:
       active: native
     config:
       server:
+        git:
+          uri: https://github.com/adriannovegil/e-shop-config
+        # Use the File System Backend to avoid git pulling. Enable "native" profile in the Config Server.
         native:
-          search-locations: classpath:/shared
-    bus:
-      enabled: true
-      refresh:
-        enabled: true
-      trace:
-        enabled: true
-    kafka:
-      bootstrap-servers: ${app.kafka.broker.host}:${app.kafka.broker.port}
+          searchLocations: file:///${GIT_REPO}
 
   security:
     user:
       name: ${app.config.user}
-      password: ${app.config.password}
-
-  zipkin:
-    enabled: false
-  sleuth:
-    enabled: false
+      password: ${app.config.password}  
 
 # Logging
 logging:

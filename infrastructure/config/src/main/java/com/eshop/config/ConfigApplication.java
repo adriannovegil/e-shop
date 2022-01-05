@@ -12,8 +12,8 @@ import org.springframework.cloud.config.server.EnableConfigServer;
  * The external repository from where the configuration will be picked up is
  * defined in the {@linkplain application.yml} file.
  */
-@SpringBootApplication
 @EnableConfigServer
+@SpringBootApplication
 public class ConfigApplication {
 
     public static void main(String[] args) {
