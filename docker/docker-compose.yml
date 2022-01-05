@@ -3,18 +3,14 @@ version: '3.9'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
-    networks:
-      - eshopnet
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - eshopnet
 
   kafka:
     image: wurstmeister/kafka
     hostname: kafka
-    networks:
-      - eshopnet
-    ports:
-      - 9092:9092
     restart: on-failure
     environment:
       KAFKA_BROKER_ID: 1
@@ -28,13 +24,13 @@ services:
       - zookeeper
     links:
       - zookeeper
+    ports:
+      - 9092:9092
+    networks:
+      - eshopnet
 
   postgres:
     build: postgres
-    networks:
-      - eshopnet
-    ports:
-      - 5432:5432
     restart: always
     environment:
       POSTGRES_PASSWORD: dbpass
@@ -54,34 +50,34 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - 5432:5432
+    networks:
+      - eshopnet
 
   redis:
     image: redis:6.2.4
-    networks:
-      - eshopnet
-    ports:
-      - 6379:6379
     restart: on-failure
     environment:
       REDIS_PASSWORD: pass
+    ports:
+      - 6379:6379
+    networks:
+      - eshopnet
 
   mongo:
     image: mongo:latest
-    networks:
-      - eshopnet
     environment:
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=pass
+    restart: always
     ports:
       - 27017:27017
-    restart: always
+    networks:
+      - eshopnet
 
   authorization-service:
     image: jboss/keycloak:14.0.0
-    networks:
-      - eshopnet
-    ports:
-      - 8090:8080
     restart: on-failure
     environment:
       KEYCLOAK_USER: admin
@@ -97,16 +93,20 @@ services:
       - postgres
     volumes:
       - ./keycloak/eshop-realm.json:/tmp/eshop-realm.json
+    ports:
+      - 8090:8080
+    networks:
+      - eshopnet
 
   portainer:
     image: portainer/portainer
-    networks:
-      - eshopnet
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer-data:/data
     ports:
       - 9000:9000
+    networks:
+      - eshopnet
 
 networks:
   eshopnet:

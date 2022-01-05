@@ -3,10 +3,6 @@ version: '3.9'
 services:
   config:
     build: ../infrastructure/config
-    networks:
-      - eshopnet
-    ports:
-      - 8888:8888
     restart: on-failure
     environment:
       SPRING_PROFILES_ACTIVE: docker,native
@@ -16,13 +12,13 @@ services:
       CONFIG_KEY_PASSWORD: ${CONFIG_KEY_PASSWORD}
       EUREKA_USER: ${EUREKA_USER}
       POSTGRES_USER: ${POSTGRES_USER}
+    ports:
+      - 8888:8888
+    networks:
+      - eshopnet
 
   discovery:
     build: ../infrastructure/discovery
-    networks:
-      - eshopnet
-    ports:
-      - 8761:8761
     restart: on-failure
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -31,13 +27,13 @@ services:
       EUREKA_USER: ${EUREKA_USER}
     depends_on:
       - config
+    ports:
+      - 8761:8761
+    networks:
+      - eshopnet
 
   gateway:
     build: ../infrastructure/gateway
-    networks:
-      - eshopnet
-    ports:
-      - 8080:8080
     restart: on-failure
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -47,6 +43,10 @@ services:
     depends_on:
       - config
       - discovery
+    ports:
+      - 8080:8080
+    networks:
+      - eshopnet
 
 networks:
   eshopnet:
