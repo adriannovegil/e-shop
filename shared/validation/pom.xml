@@ -9,7 +9,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     
-
     <artifactId>validation</artifactId>
     <name>validation</name>
     <packaging>jar</packaging>
@@ -20,5 +19,4 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
     </dependencies>
-
 </project>

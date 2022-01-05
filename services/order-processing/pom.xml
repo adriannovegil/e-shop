@@ -36,7 +36,6 @@
             <artifactId>validation</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -163,5 +162,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

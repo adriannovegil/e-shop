@@ -10,15 +10,13 @@
     </parent>    
 
     <artifactId>catalog</artifactId>
-    <packaging>pom</packaging>
-
     <name>catalog</name>
     <description>catalog</description>
+    <packaging>pom</packaging>
 
     <modules>
         <module>catalog-command</module>
         <module>catalog-query</module>
         <module>catalog-shared</module>
     </modules>
-
 </project>
