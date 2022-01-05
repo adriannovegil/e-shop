@@ -12,26 +12,26 @@ import org.springframework.util.Assert;
  */
 class EshopAudienceValidator implements OAuth2TokenValidator<Jwt> {
 
-  private final String audience;
+    private final String audience;
 
-  public EshopAudienceValidator(@NonNull String audience) {
-    Assert.hasText(audience, "Audience cannot be empty");
-    this.audience = audience;
-  }
+    public EshopAudienceValidator(@NonNull String audience) {
+        Assert.hasText(audience, "Audience cannot be empty");
+        this.audience = audience;
+    }
 
-  @Override
-  public OAuth2TokenValidatorResult validate(Jwt token) {
-    return containsValidAudience(token)
-        ? OAuth2TokenValidatorResult.success()
-        : OAuth2TokenValidatorResult.failure(invalidTokenError());
-  }
+    @Override
+    public OAuth2TokenValidatorResult validate(Jwt token) {
+        return containsValidAudience(token)
+                ? OAuth2TokenValidatorResult.success()
+                : OAuth2TokenValidatorResult.failure(invalidTokenError());
+    }
 
-  private boolean containsValidAudience(Jwt token) {
-    return token.getAudience().contains(audience);
-  }
+    private boolean containsValidAudience(Jwt token) {
+        return token.getAudience().contains(audience);
+    }
 
-  private OAuth2Error invalidTokenError() {
-    return new OAuth2Error("invalid_token", "Expected token audience: %s".formatted(audience), null);
-  }
+    private OAuth2Error invalidTokenError() {
+        return new OAuth2Error("invalid_token", "Expected token audience: %s".formatted(audience), null);
+    }
 
 }

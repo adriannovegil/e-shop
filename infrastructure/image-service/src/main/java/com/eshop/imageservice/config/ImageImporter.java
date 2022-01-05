@@ -21,30 +21,31 @@ import java.util.List;
 @Configuration
 @Profile("dev")
 public class ImageImporter implements ApplicationRunner {
-  private static final Logger logger = LoggerFactory.getLogger(ImageImporter.class);
 
-  private final ResourceLoader resourceLoader;
-  private final MinioService minioService;
+    private static final Logger logger = LoggerFactory.getLogger(ImageImporter.class);
 
-  @Override
-  public void run(ApplicationArguments args) throws Exception {
-    final var resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
-    final var images = Arrays.asList(resourcePatternResolver.getResources("classpath:images/**"));
-    uploadImages(images);
-  }
+    private final ResourceLoader resourceLoader;
+    private final MinioService minioService;
 
-  private void uploadImages(List<Resource> images) {
-    images.forEach(this::uploadImage);
-  }
-
-  private void uploadImage(Resource image) {
-    try {
-      logger.info("Uploading image %s".formatted(image.getFilename()));
-      final var content = image.getInputStream().readAllBytes();
-      minioService.uploadImage(new ImageUploadRequest(image.getFilename(), "image/png", content));
-    } catch (IOException e) {
-      logger.error("Failed to read image %s".formatted(image.getFilename()), e);
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        final var resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
+        final var images = Arrays.asList(resourcePatternResolver.getResources("classpath:images/**"));
+        uploadImages(images);
     }
-  }
+
+    private void uploadImages(List<Resource> images) {
+        images.forEach(this::uploadImage);
+    }
+
+    private void uploadImage(Resource image) {
+        try {
+            logger.info("Uploading image %s".formatted(image.getFilename()));
+            final var content = image.getInputStream().readAllBytes();
+            minioService.uploadImage(new ImageUploadRequest(image.getFilename(), "image/png", content));
+        } catch (IOException e) {
+            logger.error("Failed to read image %s".formatted(image.getFilename()), e);
+        }
+    }
 
 }

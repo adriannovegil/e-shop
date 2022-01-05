@@ -20,34 +20,34 @@ import static java.util.Objects.nonNull;
 @Component
 public class CatalogItemsQueryHandler implements QueryHandler<Page<CatalogItem>, CatalogItemsQuery> {
 
-  private final CatalogItemRepository catalogItemRepository;
-  private final BrandRepository brandRepository;
-  private final CategoryRepository categoryRepository;
+    private final CatalogItemRepository catalogItemRepository;
+    private final BrandRepository brandRepository;
+    private final CategoryRepository categoryRepository;
 
-  @Override
-  public Page<CatalogItem> handle(CatalogItemsQuery query) {
-    final var brand = findBrand(query.brandId());
-    final var category = findCategory(query.categoryId());
-    final var page = PageRequest.of(query.pageIndex(), query.pageSize());
+    @Override
+    public Page<CatalogItem> handle(CatalogItemsQuery query) {
+        final var brand = findBrand(query.brandId());
+        final var category = findCategory(query.categoryId());
+        final var page = PageRequest.of(query.pageIndex(), query.pageSize());
 
-    return catalogItemRepository.findAll(
-        Specification.where(itemBrandEqual(brand).and(itemCategoryEqual(category))),
-        page.withSort(Sort.sort(CatalogItem.class).by(CatalogItem::getId).descending())
-    );
-  }
+        return catalogItemRepository.findAll(
+                Specification.where(itemBrandEqual(brand).and(itemCategoryEqual(category))),
+                page.withSort(Sort.sort(CatalogItem.class).by(CatalogItem::getId).descending())
+        );
+    }
 
-  private Brand findBrand(UUID id) {
-    return nonNull(id)
-        ? brandRepository.findById(id)
-        .orElseThrow(() -> new BadRequestException("Catalog item brand with id: %d does not exist".formatted(id)))
-        : null;
-  }
+    private Brand findBrand(UUID id) {
+        return nonNull(id)
+                ? brandRepository.findById(id)
+                        .orElseThrow(() -> new BadRequestException("Catalog item brand with id: %d does not exist".formatted(id)))
+                : null;
+    }
 
-  private Category findCategory(UUID id) {
-    return nonNull(id)
-        ? categoryRepository.findById(id)
-        .orElseThrow(() -> new BadRequestException("Catalog item category with id: %d does not exist".formatted(id)))
-        : null;
-  }
+    private Category findCategory(UUID id) {
+        return nonNull(id)
+                ? categoryRepository.findById(id)
+                        .orElseThrow(() -> new BadRequestException("Catalog item category with id: %d does not exist".formatted(id)))
+                : null;
+    }
 
 }

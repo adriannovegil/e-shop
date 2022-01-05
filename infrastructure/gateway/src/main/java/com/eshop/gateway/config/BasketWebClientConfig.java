@@ -11,11 +11,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 @LoadBalancerClient(value = "basket", configuration = RandomLoadBalancerConfig.class)
 public class BasketWebClientConfig {
 
-  @LoadBalanced
-  @Bean
-  public WebClient.Builder basketWebClient() {
-    return WebClient.builder()
-        .filter(new ServerBearerExchangeFilterFunction());
-  }
+    @LoadBalanced
+    @Bean
+    public WebClient.Builder basketWebClient() {
+        return WebClient.builder()
+                .filter(new ServerBearerExchangeFilterFunction());
+    }
 
 }

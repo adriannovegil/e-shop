@@ -19,32 +19,33 @@ import java.util.stream.Collectors;
 @EventHandler
 @RequiredArgsConstructor
 public class OrderStatusChangedToAwaitingValidationDomainEventHandler
-    implements DomainEventHandler<OrderStatusChangedToAwaitingValidationDomainEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToAwaitingValidationDomainEventHandler.class);
+        implements DomainEventHandler<OrderStatusChangedToAwaitingValidationDomainEvent> {
 
-  private final OrderApplicationService orderApplicationService;
-  private final IntegrationEventLogService integrationEventLogService;
-  private final KafkaTopics topics;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToAwaitingValidationDomainEventHandler.class);
 
-  @EventListener
-  public void handle(OrderStatusChangedToAwaitingValidationDomainEvent event) {
-    logger.info(
-        "Order with Id: {} has been successfully updated to status {}",
-        event.orderId(),
-        OrderStatus.AwaitingValidation
-    );
+    private final OrderApplicationService orderApplicationService;
+    private final IntegrationEventLogService integrationEventLogService;
+    private final KafkaTopics topics;
 
-    var order = orderApplicationService.findOrder(event.orderId());
-    var buyer = orderApplicationService.findBuyerFor(order);
-    var orderStockList = event.orderItems().stream()
-        .map(orderItem -> new OrderStockItem(orderItem.getProductId(), orderItem.getUnits().getValue()))
-        .collect(Collectors.toList());
+    @EventListener
+    public void handle(OrderStatusChangedToAwaitingValidationDomainEvent event) {
+        logger.info(
+                "Order with Id: {} has been successfully updated to status {}",
+                event.orderId(),
+                OrderStatus.AwaitingValidation
+        );
 
-    var orderStatusChangedToAwaitingValidationIntegrationEvent = new OrderStatusChangedToAwaitingValidationIntegrationEvent(
-        order.getId().getUuid(), order.getOrderStatus().getStatus(), buyer.getBuyerName().getName(), orderStockList);
-    integrationEventLogService.saveEvent(
-        orderStatusChangedToAwaitingValidationIntegrationEvent,
-        topics.getOrdersWaitingForValidation()
-    );
-  }
+        var order = orderApplicationService.findOrder(event.orderId());
+        var buyer = orderApplicationService.findBuyerFor(order);
+        var orderStockList = event.orderItems().stream()
+                .map(orderItem -> new OrderStockItem(orderItem.getProductId(), orderItem.getUnits().getValue()))
+                .collect(Collectors.toList());
+
+        var orderStatusChangedToAwaitingValidationIntegrationEvent = new OrderStatusChangedToAwaitingValidationIntegrationEvent(
+                order.getId().getUuid(), order.getOrderStatus().getStatus(), buyer.getBuyerName().getName(), orderStockList);
+        integrationEventLogService.saveEvent(
+                orderStatusChangedToAwaitingValidationIntegrationEvent,
+                topics.getOrdersWaitingForValidation()
+        );
+    }
 }

@@ -34,101 +34,102 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 @RestController
 @RequiredArgsConstructor
 public class CatalogController {
-  private static final Logger logger = LoggerFactory.getLogger(CatalogController.class);
 
-  private final QueryBus queryBus;
+    private static final Logger logger = LoggerFactory.getLogger(CatalogController.class);
 
-  /**
-   * Returns catalog items for given item ids.
-   *
-   * @param ids catalog item ids
-   * @return catalog items
-   */
-  @RequestMapping("items/withids/{ids}")
-  public Iterable<CatalogItem> catalogItemsByIds(@PathVariable String ids) {
-    if (isEmpty(ids)) {
-      throw new BadRequestException("Invalid ids value");
+    private final QueryBus queryBus;
+
+    /**
+     * Returns catalog items for given item ids.
+     *
+     * @param ids catalog item ids
+     * @return catalog items
+     */
+    @RequestMapping("items/withids/{ids}")
+    public Iterable<CatalogItem> catalogItemsByIds(@PathVariable String ids) {
+        if (isEmpty(ids)) {
+            throw new BadRequestException("Invalid ids value");
+        }
+
+        final var itemIds = Arrays.
+                stream(ids.split(","))
+                .map(UUID::fromString)
+                .collect(Collectors.toSet());
+        return queryBus.execute(new CatalogItemsByIdsQuery(itemIds));
     }
 
-    final var itemIds = Arrays.
-        stream(ids.split(","))
-        .map(UUID::fromString)
-        .collect(Collectors.toSet());
-    return queryBus.execute(new CatalogItemsByIdsQuery(itemIds));
-  }
+    /**
+     * Returns catalog items that belong to given brand and type in the given
+     * page.
+     *
+     * @param pageSize number of items
+     * @param pageIndex page
+     * @param brandId item brand
+     * @param categoryId item category
+     * @return catalog items
+     */
+    @RequestMapping("items")
+    public Page<CatalogItem> catalogItems(
+            @RequestParam(defaultValue = "10", required = false) Integer pageSize,
+            @RequestParam(defaultValue = "0", required = false) Integer pageIndex,
+            @RequestParam(required = false) UUID brandId,
+            @RequestParam(required = false) UUID categoryId
+    ) {
+        logger.info("Find catalog items - page size: {}, page index: {}, brand: {}, type: {}", pageSize, pageIndex, brandId, categoryId);
 
-  /**
-   * Returns catalog items that belong to given brand and type in the given page.
-   *
-   * @param pageSize   number of items
-   * @param pageIndex  page
-   * @param brandId    item brand
-   * @param categoryId item category
-   * @return catalog items
-   */
-  @RequestMapping("items")
-  public Page<CatalogItem> catalogItems(
-      @RequestParam(defaultValue = "10", required = false) Integer pageSize,
-      @RequestParam(defaultValue = "0", required = false) Integer pageIndex,
-      @RequestParam(required = false) UUID brandId,
-      @RequestParam(required = false) UUID categoryId
-  ) {
-    logger.info("Find catalog items - page size: {}, page index: {}, brand: {}, type: {}", pageSize, pageIndex, brandId, categoryId);
-
-    return queryBus.execute(new CatalogItemsQuery(pageSize, pageIndex, brandId, categoryId));
-  }
-
-  /**
-   * Returns catalog item by given id.
-   *
-   * @param id item id
-   * @return catalog item
-   */
-  @RequestMapping("items/{id}")
-  public ResponseEntity<CatalogItem> catalogItem(@PathVariable UUID id) {
-    logger.info("Find catalog item: {}", id);
-    return ResponseEntity.of(queryBus.execute(new CatalogItemByIdQuery(id)));
-  }
-
-  /**
-   * Returns catalog items by given name in give page.
-   *
-   * @param pageSize  number of items to be returned
-   * @param pageIndex page
-   * @param name      name of item
-   * @return catalog items
-   */
-  @RequestMapping("items/withname/{name}")
-  public Page<CatalogItem> catalogItems(
-      @RequestParam(defaultValue = "10", required = false) Integer pageSize,
-      @RequestParam(defaultValue = "0", required = false) Integer pageIndex,
-      @PathVariable String name
-  ) {
-    if (isEmpty(name)) {
-      throw new BadRequestException("The name must be at least one character long");
+        return queryBus.execute(new CatalogItemsQuery(pageSize, pageIndex, brandId, categoryId));
     }
-    return queryBus.execute(new CatalogItemWithNameQuery(pageSize, pageIndex, name));
-  }
 
-  /**
-   * Returns all catalog brands.
-   *
-   * @return all catalog brands
-   */
-  @RequestMapping("brands")
-  public Iterable<Brand> catalogBrands() {
-    return queryBus.execute(new AllBrandsQuery());
-  }
+    /**
+     * Returns catalog item by given id.
+     *
+     * @param id item id
+     * @return catalog item
+     */
+    @RequestMapping("items/{id}")
+    public ResponseEntity<CatalogItem> catalogItem(@PathVariable UUID id) {
+        logger.info("Find catalog item: {}", id);
+        return ResponseEntity.of(queryBus.execute(new CatalogItemByIdQuery(id)));
+    }
 
-  /**
-   * Returns all catalog brands.
-   *
-   * @return all catalog brands
-   */
-  @RequestMapping("categories")
-  public Iterable<Category> catalogCategories() {
-    return queryBus.execute(new AllCategoryQuery());
-  }
+    /**
+     * Returns catalog items by given name in give page.
+     *
+     * @param pageSize number of items to be returned
+     * @param pageIndex page
+     * @param name name of item
+     * @return catalog items
+     */
+    @RequestMapping("items/withname/{name}")
+    public Page<CatalogItem> catalogItems(
+            @RequestParam(defaultValue = "10", required = false) Integer pageSize,
+            @RequestParam(defaultValue = "0", required = false) Integer pageIndex,
+            @PathVariable String name
+    ) {
+        if (isEmpty(name)) {
+            throw new BadRequestException("The name must be at least one character long");
+        }
+        return queryBus.execute(new CatalogItemWithNameQuery(pageSize, pageIndex, name));
+    }
+
+    /**
+     * Returns all catalog brands.
+     *
+     * @return all catalog brands
+     */
+    @RequestMapping("brands")
+    public Iterable<Brand> catalogBrands() {
+        return queryBus.execute(new AllBrandsQuery());
+    }
+
+    /**
+     * Returns all catalog brands.
+     *
+     * @return all catalog brands
+     */
+    @RequestMapping("categories")
+    public Iterable<Category> catalogCategories() {
+        return queryBus.execute(new AllCategoryQuery());
+    }
 
 }
-

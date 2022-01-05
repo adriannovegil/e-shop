@@ -17,63 +17,64 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 @Service
 public class BasketServiceImpl implements BasketService {
-  private static final Logger logger = LoggerFactory.getLogger(BasketController.class);
 
-  private final BasketRepository basketRepository;
-  private final IdentityService identityService;
-  private final EventBus orderCheckoutsEventBus;
+    private static final Logger logger = LoggerFactory.getLogger(BasketController.class);
 
-  @Override
-  public CustomerBasket getBasketById(String customerId) {
-    return getCustomerBasket(customerId);
-  }
+    private final BasketRepository basketRepository;
+    private final IdentityService identityService;
+    private final EventBus orderCheckoutsEventBus;
 
-  @Override
-  public CustomerBasket updateBasket(CustomerBasket basket) {
-    return basketRepository.updateBasket(basket);
-  }
+    @Override
+    public CustomerBasket getBasketById(String customerId) {
+        return getCustomerBasket(customerId);
+    }
 
-  @Transactional
-  @Override
-  public void checkout(BasketCheckout basketCheckout) {
-    var userName = identityService.getUserName();
-    var basket = getCustomerBasket(userName);
+    @Override
+    public CustomerBasket updateBasket(CustomerBasket basket) {
+        return basketRepository.updateBasket(basket);
+    }
 
-    logger.info("Checking out the basket for user: {} - request id: {}", userName, basketCheckout.getRequestId());
+    @Transactional
+    @Override
+    public void checkout(BasketCheckout basketCheckout) {
+        var userName = identityService.getUserName();
+        var basket = getCustomerBasket(userName);
 
-    var event = new UserCheckoutAcceptedIntegrationEvent(
-        userName,
-        userName,
-        basketCheckout.getCity(),
-        basketCheckout.getStreet(),
-        basketCheckout.getState(),
-        basketCheckout.getCountry(),
-        basketCheckout.getZipCode(),
-        basketCheckout.getCardNumber(),
-        basketCheckout.getCardHolderName(),
-        basketCheckout.getCardExpiration(),
-        basketCheckout.getCardSecurityNumber(),
-        basketCheckout.getCardType(),
-        basketCheckout.getBuyer(),
-        basketCheckout.getRequestId(),
-        basket
-    );
+        logger.info("Checking out the basket for user: {} - request id: {}", userName, basketCheckout.getRequestId());
 
-    basket.changeStatusTo(BasketStatus.Checkout);
-    basketRepository.updateBasket(basket);
+        var event = new UserCheckoutAcceptedIntegrationEvent(
+                userName,
+                userName,
+                basketCheckout.getCity(),
+                basketCheckout.getStreet(),
+                basketCheckout.getState(),
+                basketCheckout.getCountry(),
+                basketCheckout.getZipCode(),
+                basketCheckout.getCardNumber(),
+                basketCheckout.getCardHolderName(),
+                basketCheckout.getCardExpiration(),
+                basketCheckout.getCardSecurityNumber(),
+                basketCheckout.getCardType(),
+                basketCheckout.getBuyer(),
+                basketCheckout.getRequestId(),
+                basket
+        );
 
-    // Once basket is checkout, sends an integration event to order-processor to convert basket to order and proceeds
-    // with order creation process.
-    orderCheckoutsEventBus.publish(event);
-  }
+        basket.changeStatusTo(BasketStatus.Checkout);
+        basketRepository.updateBasket(basket);
 
-  @Override
-  public void deleteBasketForCustomer(String customerId) {
-    basketRepository.deleteBasket(customerId);
-  }
+        // Once basket is checkout, sends an integration event to order-processor to convert basket to order and proceeds
+        // with order creation process.
+        orderCheckoutsEventBus.publish(event);
+    }
 
-  private CustomerBasket getCustomerBasket(String customerId) {
-    return basketRepository.getBasket(customerId)
-        .orElseThrow(() -> new NotFoundException("Basket is not found for user %s".formatted(customerId)));
-  }
+    @Override
+    public void deleteBasketForCustomer(String customerId) {
+        basketRepository.deleteBasket(customerId);
+    }
+
+    private CustomerBasket getCustomerBasket(String customerId) {
+        return basketRepository.getBasket(customerId)
+                .orElseThrow(() -> new NotFoundException("Basket is not found for user %s".formatted(customerId)));
+    }
 }

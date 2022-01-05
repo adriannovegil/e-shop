@@ -9,6 +9,7 @@ import java.util.UUID;
 @Getter
 @RequiredArgsConstructor
 public abstract class IdentifiedCommand<T extends Command<R>, R> implements Command<R> {
-  private final T command;
-  private final UUID id;
+
+    private final T command;
+    private final UUID id;
 }

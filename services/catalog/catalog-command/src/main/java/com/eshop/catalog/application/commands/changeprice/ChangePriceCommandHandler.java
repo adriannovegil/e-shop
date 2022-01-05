@@ -21,36 +21,37 @@ import static java.util.Objects.isNull;
 @RequiredArgsConstructor
 @Component
 public class ChangePriceCommandHandler implements CatalogCommandHandler<CatalogItemResponse, ChangePriceCommand> {
-  private final IntegrationEventPublisher integrationEventPublisher;
-  private final CatalogItemRepository catalogItemRepository;
-  private final KafkaTopics topics;
 
-  @CommandHandler
-  @Transactional
-  @Override
-  public CatalogItemResponse handle(ChangePriceCommand command) {
-    final var catalogItemAggregate = catalogItemRepository.loadAggregate(command.productId());
+    private final IntegrationEventPublisher integrationEventPublisher;
+    private final CatalogItemRepository catalogItemRepository;
+    private final KafkaTopics topics;
 
-    if (isNull(catalogItemAggregate)) {
-      throw new NotFoundException("Catalog item not found");
+    @CommandHandler
+    @Transactional
+    @Override
+    public CatalogItemResponse handle(ChangePriceCommand command) {
+        final var catalogItemAggregate = catalogItemRepository.loadAggregate(command.productId());
+
+        if (isNull(catalogItemAggregate)) {
+            throw new NotFoundException("Catalog item not found");
+        }
+
+        final var catalogItem = catalogItemAggregate.invoke(Function.identity());
+        final var price = Price.of(command.price());
+        var priceChangedEvent = new ProductPriceChangedIntegrationEvent(
+                catalogItem.getId(),
+                price.getValue(),
+                catalogItem.getPrice().getValue()
+        );
+
+        catalogItemAggregate.execute(c -> c.changePrice(price));
+
+        // TODO publish PriceChangedEvent in a domain event handler
+        integrationEventPublisher.publish(topics.getProductPriceChanges(), priceChangedEvent);
+
+        return CatalogItemResponse.builder()
+                .productId(command.productId())
+                .version(catalogItemAggregate.version())
+                .build();
     }
-
-    final var catalogItem = catalogItemAggregate.invoke(Function.identity());
-    final var price = Price.of(command.price());
-    var priceChangedEvent = new ProductPriceChangedIntegrationEvent(
-        catalogItem.getId(),
-        price.getValue(),
-        catalogItem.getPrice().getValue()
-    );
-
-    catalogItemAggregate.execute(c -> c.changePrice(price));
-
-    // TODO publish PriceChangedEvent in a domain event handler
-    integrationEventPublisher.publish(topics.getProductPriceChanges(), priceChangedEvent);
-
-    return CatalogItemResponse.builder()
-        .productId(command.productId())
-        .version(catalogItemAggregate.version())
-        .build();
-  }
 }

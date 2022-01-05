@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class OrderStatusChangedToPaidIntegrationEvent extends IntegrationEvent {
-  private String orderId;
-  private String buyerName;
-  private String orderStatus;
+
+    private String orderId;
+    private String buyerName;
+    private String orderStatus;
 }

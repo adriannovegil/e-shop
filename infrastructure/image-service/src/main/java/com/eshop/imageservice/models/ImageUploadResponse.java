@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ImageUploadResponse {
-  @JsonProperty("fileName")
-  private final String fileName;
+
+    @JsonProperty("fileName")
+    private final String fileName;
 }

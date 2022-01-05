@@ -10,9 +10,10 @@ import org.springframework.stereotype.Component;
 @Data
 @RefreshScope
 public class KafkaTopics {
-  private String ordersWaitingForValidation;
-  private String paidOrders;
-  private String orderStockConfirmed;
-  private String orderStockRejected;
-  private String productPriceChanges;
+
+    private String ordersWaitingForValidation;
+    private String paidOrders;
+    private String orderStockConfirmed;
+    private String orderStockRejected;
+    private String productPriceChanges;
 }

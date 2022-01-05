@@ -1,12 +1,12 @@
 <ng-container *ngIf="readOnly; else showForm">
-  {{value}}
+    {{value}}
 </ng-container>
 
 <ng-template #showForm>
-  <form [formGroup]="form" (submit)="onSubmit()" (focusout)="onFocusOut()">
-    <ng-container
-      [ngTemplateOutlet]="inputTemplate"
-      [ngTemplateOutletContext]="inputContext">
-    </ng-container>
-  </form>
+    <form [formGroup]="form" (submit)="onSubmit()" (focusout)="onFocusOut()">
+        <ng-container
+            [ngTemplateOutlet]="inputTemplate"
+            [ngTemplateOutletContext]="inputContext">
+        </ng-container>
+    </form>
 </ng-template>

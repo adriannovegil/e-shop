@@ -12,18 +12,19 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Component
 public class OrderStatusChangedToPaidIntegrationEventHandler {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToAwaitingValidationIntegrationEventHandler.class);
 
-  private final CatalogItemRepository catalogItemRepository;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToAwaitingValidationIntegrationEventHandler.class);
 
-  @KafkaListener(groupId = "${app.kafka.group.paidOrders}", topics = "${spring.kafka.consumer.topic.paidOrders}")
-  public void handle(OrderStatusChangedToPaidIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    event.getOrderStockItems().forEach(orderStockItem -> catalogItemRepository
-        .load(orderStockItem.getProductId())
-        .ifPresent(catalogItem ->
-            catalogItem.removeStock(Units.of(orderStockItem.getUnits()))
-        )
-    );
-  }
+    private final CatalogItemRepository catalogItemRepository;
+
+    @KafkaListener(groupId = "${app.kafka.group.paidOrders}", topics = "${spring.kafka.consumer.topic.paidOrders}")
+    public void handle(OrderStatusChangedToPaidIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        event.getOrderStockItems().forEach(orderStockItem -> catalogItemRepository
+                .load(orderStockItem.getProductId())
+                .ifPresent(catalogItem
+                        -> catalogItem.removeStock(Units.of(orderStockItem.getUnits()))
+                )
+        );
+    }
 }

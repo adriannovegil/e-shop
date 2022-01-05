@@ -12,18 +12,19 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class CustomerBasket implements Serializable {
-  @NotEmpty(message = "Buyer id is required")
-  private String buyerId;
-  private BasketStatus status = BasketStatus.New;
-  @NotEmpty(message = "The basket must contain at least one item")
-  @Valid
-  private final List<BasketItem> items = new ArrayList<>();
 
-  public CustomerBasket(String customerId) {
-    buyerId = customerId;
-  }
+    @NotEmpty(message = "Buyer id is required")
+    private String buyerId;
+    private BasketStatus status = BasketStatus.New;
+    @NotEmpty(message = "The basket must contain at least one item")
+    @Valid
+    private final List<BasketItem> items = new ArrayList<>();
 
-  public void changeStatusTo(BasketStatus status) {
-    this.status = status;
-  }
+    public CustomerBasket(String customerId) {
+        buyerId = customerId;
+    }
+
+    public void changeStatusTo(BasketStatus status) {
+        this.status = status;
+    }
 }

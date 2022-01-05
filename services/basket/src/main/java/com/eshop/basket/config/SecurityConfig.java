@@ -20,45 +20,46 @@ import static com.eshop.security.GrantedAuthoritiesUtils.scope;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-  private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-  private static final String BASKET_SCOPE = "basket";
 
-  @Value("${app.security.jwt.user-name-attribute}")
-  private String userNameAttribute;
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    private static final String BASKET_SCOPE = "basket";
 
-  @Value("${app.auth-server.issuer-uri}")
-  private String issuer;
+    @Value("${app.security.jwt.user-name-attribute}")
+    private String userNameAttribute;
 
-  @Value("${app.security.audience.basket}")
-  private String basketAudience;
+    @Value("${app.auth-server.issuer-uri}")
+    private String issuer;
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http
-        .antMatcher("/basket/**")
-        .authorizeRequests()
-        .antMatchers(HttpMethod.GET, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
-        .antMatchers(HttpMethod.POST, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
-        .antMatchers(HttpMethod.PUT, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
-        .antMatchers(HttpMethod.DELETE, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
-        .and()
-        .oauth2ResourceServer()
-        .jwt()
-        .decoder(jwtDecoder())
-        .jwtAuthenticationConverter(jwtAuthenticationConverter());
-  }
+    @Value("${app.security.audience.basket}")
+    private String basketAudience;
 
-  @EventListener
-  public void authenticationSuccess(AuthenticationSuccessEvent event) {
-    logger.info("User {} authenticated", event.getAuthentication().getName());
-  }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .antMatcher("/basket/**")
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
+                .antMatchers(HttpMethod.POST, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
+                .antMatchers(HttpMethod.PUT, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
+                .antMatchers(HttpMethod.DELETE, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
+                .and()
+                .oauth2ResourceServer()
+                .jwt()
+                .decoder(jwtDecoder())
+                .jwtAuthenticationConverter(jwtAuthenticationConverter());
+    }
 
-  private JwtDecoder jwtDecoder() {
-    return new EshopJwtDecoder(issuer, basketAudience);
-  }
+    @EventListener
+    public void authenticationSuccess(AuthenticationSuccessEvent event) {
+        logger.info("User {} authenticated", event.getAuthentication().getName());
+    }
 
-  private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
-    return new EshopJwtAuthenticationConverter(userNameAttribute);
-  }
+    private JwtDecoder jwtDecoder() {
+        return new EshopJwtDecoder(issuer, basketAudience);
+    }
+
+    private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
+        return new EshopJwtAuthenticationConverter(userNameAttribute);
+    }
 
 }

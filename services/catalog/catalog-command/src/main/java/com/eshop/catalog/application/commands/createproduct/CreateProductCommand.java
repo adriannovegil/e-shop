@@ -9,23 +9,23 @@ import java.util.UUID;
 
 public record CreateProductCommand(
     @JsonProperty
-    @NotNull(message = "No product name defined")
+        @NotNull(message = "No product name defined")
     String name,
     @JsonProperty
     String description,
     @JsonProperty
-    @NotNull
+        @NotNull
     Double price,
     @JsonProperty
     String pictureFileName,
     @NotNull
-    @JsonProperty
+        @JsonProperty
     Integer availableStock,
     @JsonProperty
-    @NotNull
+        @NotNull
     UUID brandId,
     @JsonProperty
-    @NotNull
+        @NotNull
     UUID categoryId
 ) implements Command<CatalogItemResponse> {
 }

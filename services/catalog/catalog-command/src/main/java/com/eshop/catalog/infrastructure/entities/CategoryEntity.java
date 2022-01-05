@@ -13,10 +13,10 @@ import java.util.UUID;
 @Document("category")
 public class CategoryEntity {
 
-  @Id
-  private String id;
+    @Id
+    private String id;
 
-  private UUID categoryId;
+    private UUID categoryId;
 
-  private String name;
+    private String name;
 }

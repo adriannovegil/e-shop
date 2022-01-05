@@ -8,5 +8,6 @@ import java.util.UUID;
 @Builder
 @Getter
 public class AddBrandResponse {
-  private final String brandName;
+
+    private final String brandName;
 }

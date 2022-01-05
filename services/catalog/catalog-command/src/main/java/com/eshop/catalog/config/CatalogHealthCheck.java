@@ -7,8 +7,9 @@ import org.springframework.boot.actuate.health.HealthIndicator;
  * Custom health check.
  */
 public class CatalogHealthCheck implements HealthIndicator {
-  @Override
-  public Health health() {
-    return Health.up().build();
-  }
+
+    @Override
+    public Health health() {
+        return Health.up().build();
+    }
 }

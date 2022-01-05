@@ -13,23 +13,24 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class OrderStatusChangedToStockConfirmedIntegrationEventHandler
-    implements IntegrationEventHandler<OrderStatusChangedToStockConfirmedIntegrationEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToStockConfirmedIntegrationEventHandler.class);
-  private static final String DESTINATION = "/queue/order-stock-confirmed";
+        implements IntegrationEventHandler<OrderStatusChangedToStockConfirmedIntegrationEvent> {
 
-  private final SimpMessagingTemplate simpMessagingTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToStockConfirmedIntegrationEventHandler.class);
+    private static final String DESTINATION = "/queue/order-stock-confirmed";
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.stockConfirmed}",
-      topics = "${spring.kafka.consumer.topic.stockConfirmed}"
-  )
-  @Override
-  public void handle(OrderStatusChangedToStockConfirmedIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    simpMessagingTemplate.convertAndSendToUser(
-        event.getBuyerName(),
-        DESTINATION,
-        new OrderStatus(event.getOrderId(), event.getOrderStatus())
-    );
-  }
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    @KafkaListener(
+            groupId = "${app.kafka.group.stockConfirmed}",
+            topics = "${spring.kafka.consumer.topic.stockConfirmed}"
+    )
+    @Override
+    public void handle(OrderStatusChangedToStockConfirmedIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        simpMessagingTemplate.convertAndSendToUser(
+                event.getBuyerName(),
+                DESTINATION,
+                new OrderStatus(event.getOrderId(), event.getOrderStatus())
+        );
+    }
 }

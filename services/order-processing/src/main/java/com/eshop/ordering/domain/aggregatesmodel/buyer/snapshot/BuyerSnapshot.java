@@ -9,8 +9,9 @@ import java.util.List;
 @Builder
 @Getter
 public class BuyerSnapshot implements Snapshot {
-  private final String id;
-  private final String userId;
-  private final String buyerName;
-  private final List<PaymentMethodSnapshot> paymentMethods;
+
+    private final String id;
+    private final String userId;
+    private final String buyerName;
+    private final List<PaymentMethodSnapshot> paymentMethods;
 }

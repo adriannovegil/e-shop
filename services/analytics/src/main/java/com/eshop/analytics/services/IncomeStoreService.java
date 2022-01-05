@@ -12,15 +12,16 @@ import static com.eshop.analytics.common.Constants.TOTAL_INCOME_STORE_KEY;
 @RequiredArgsConstructor
 @Service
 public class IncomeStoreService implements IncomeService {
-  private final InteractiveQueryService interactiveQueryService;
 
-  @Override
-  public Double totalIncome() {
-    final ReadOnlyKeyValueStore<String, Double> incomeStore = interactiveQueryService.getQueryableStore(
-        TOTAL_INCOME_STORE,
-        QueryableStoreTypes.keyValueStore()
-    );
+    private final InteractiveQueryService interactiveQueryService;
 
-    return incomeStore.get(TOTAL_INCOME_STORE_KEY);
-  }
+    @Override
+    public Double totalIncome() {
+        final ReadOnlyKeyValueStore<String, Double> incomeStore = interactiveQueryService.getQueryableStore(
+                TOTAL_INCOME_STORE,
+                QueryableStoreTypes.keyValueStore()
+        );
+
+        return incomeStore.get(TOTAL_INCOME_STORE_KEY);
+    }
 }

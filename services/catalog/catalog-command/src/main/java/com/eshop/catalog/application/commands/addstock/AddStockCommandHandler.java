@@ -14,22 +14,23 @@ import static java.util.Objects.isNull;
 @RequiredArgsConstructor
 @Component
 public class AddStockCommandHandler implements CatalogCommandHandler<CatalogItemResponse, AddStockCommand> {
-  private final CatalogItemRepository catalogItemRepository;
 
-  @CommandHandler
-  @Override
-  public CatalogItemResponse handle(AddStockCommand command) {
-    final var catalogItem = catalogItemRepository.loadAggregate(command.productId());
+    private final CatalogItemRepository catalogItemRepository;
 
-    if (isNull(catalogItem)) {
-      throw new NotFoundException("Catalog item not found");
+    @CommandHandler
+    @Override
+    public CatalogItemResponse handle(AddStockCommand command) {
+        final var catalogItem = catalogItemRepository.loadAggregate(command.productId());
+
+        if (isNull(catalogItem)) {
+            throw new NotFoundException("Catalog item not found");
+        }
+
+        catalogItem.execute(c -> c.addStock(Units.of(command.quantity())));
+
+        return CatalogItemResponse.builder()
+                .productId(command.productId())
+                .version(catalogItem.version())
+                .build();
     }
-
-    catalogItem.execute(c -> c.addStock(Units.of(command.quantity())));
-
-    return CatalogItemResponse.builder()
-        .productId(command.productId())
-        .version(catalogItem.version())
-        .build();
-  }
 }

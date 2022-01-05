@@ -13,62 +13,68 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class IntegrationEventLogServiceImpl implements IntegrationEventLogService {
-  private static final Logger logger = LoggerFactory.getLogger(IntegrationEventLogServiceImpl.class);
 
-  private final ObjectMapper eventLogObjectMapper;
-  private final IntegrationEventLogRepository integrationEventLogRepository;
+    private static final Logger logger = LoggerFactory.getLogger(IntegrationEventLogServiceImpl.class);
 
-  @Override
-  public List<IntegrationEventLogEntry> retrieveEventLogsPendingToPublish() {
-    return integrationEventLogRepository.findAll()
-        .stream()
-        .filter(eventLogEntry -> EventState.NotPublished.equals(eventLogEntry.getEventState()))
-        .peek(eventLogEntry -> eventLogEntry.setEvent(this.deserialize(eventLogEntry)))
-        .collect(Collectors.toList());
-  }
+    private final ObjectMapper eventLogObjectMapper;
+    private final IntegrationEventLogRepository integrationEventLogRepository;
 
-  @Override
-  public void markEventAsInProgress(IntegrationEventLogEntry eventLogEntry) {
-    updateEventStatus(eventLogEntry, EventState.InProgress);
-  }
-
-  @Override
-  public void markEventAsPublished(IntegrationEventLogEntry eventLogEntry) {
-    updateEventStatus(eventLogEntry, EventState.Published);
-  }
-
-  @Override
-  public void markEventAsFailed(IntegrationEventLogEntry eventLogEntry) {
-    updateEventStatus(eventLogEntry, EventState.PublishedFailed);
-  }
-
-  @Override
-  public void saveEvent(IntegrationEvent event, String topic) {
-    if (event == null) throw new IllegalArgumentException("event cannot be null");
-    if (topic == null) throw new IllegalArgumentException("topic cannot be null");
-
-    try {
-      var eventLogEntry = new IntegrationEventLogEntry(event, eventLogObjectMapper.writeValueAsString(event), topic);
-      integrationEventLogRepository.save(eventLogEntry);
-    } catch (JsonProcessingException e) {
-      logger.error("Error while creating IntegrationEventLogEntry for {}: ", event.getClass().getSimpleName(), e);
+    @Override
+    public List<IntegrationEventLogEntry> retrieveEventLogsPendingToPublish() {
+        return integrationEventLogRepository.findAll()
+                .stream()
+                .filter(eventLogEntry -> EventState.NotPublished.equals(eventLogEntry.getEventState()))
+                .peek(eventLogEntry -> eventLogEntry.setEvent(this.deserialize(eventLogEntry)))
+                .collect(Collectors.toList());
     }
-  }
 
-  private void updateEventStatus(IntegrationEventLogEntry eventLogEntry, EventState eventState) {
-    eventLogEntry.setEventState(eventState);
+    @Override
+    public void markEventAsInProgress(IntegrationEventLogEntry eventLogEntry) {
+        updateEventStatus(eventLogEntry, EventState.InProgress);
+    }
 
-    if (EventState.InProgress.equals(eventState))
-      eventLogEntry.incrementTimesSent();
+    @Override
+    public void markEventAsPublished(IntegrationEventLogEntry eventLogEntry) {
+        updateEventStatus(eventLogEntry, EventState.Published);
+    }
 
-    integrationEventLogRepository.save(eventLogEntry);
-  }
+    @Override
+    public void markEventAsFailed(IntegrationEventLogEntry eventLogEntry) {
+        updateEventStatus(eventLogEntry, EventState.PublishedFailed);
+    }
 
-  @SneakyThrows
-  private IntegrationEvent deserialize(IntegrationEventLogEntry eventLogEntry) {
-    return (IntegrationEvent) eventLogObjectMapper.readValue(
-        eventLogEntry.getContent(),
-        Class.forName(eventLogEntry.getEventTypeName())
-    );
-  }
+    @Override
+    public void saveEvent(IntegrationEvent event, String topic) {
+        if (event == null) {
+            throw new IllegalArgumentException("event cannot be null");
+        }
+        if (topic == null) {
+            throw new IllegalArgumentException("topic cannot be null");
+        }
+
+        try {
+            var eventLogEntry = new IntegrationEventLogEntry(event, eventLogObjectMapper.writeValueAsString(event), topic);
+            integrationEventLogRepository.save(eventLogEntry);
+        } catch (JsonProcessingException e) {
+            logger.error("Error while creating IntegrationEventLogEntry for {}: ", event.getClass().getSimpleName(), e);
+        }
+    }
+
+    private void updateEventStatus(IntegrationEventLogEntry eventLogEntry, EventState eventState) {
+        eventLogEntry.setEventState(eventState);
+
+        if (EventState.InProgress.equals(eventState)) {
+            eventLogEntry.incrementTimesSent();
+        }
+
+        integrationEventLogRepository.save(eventLogEntry);
+    }
+
+    @SneakyThrows
+    private IntegrationEvent deserialize(IntegrationEventLogEntry eventLogEntry) {
+        return (IntegrationEvent) eventLogObjectMapper.readValue(
+                eventLogEntry.getContent(),
+                Class.forName(eventLogEntry.getEventTypeName())
+        );
+    }
 }

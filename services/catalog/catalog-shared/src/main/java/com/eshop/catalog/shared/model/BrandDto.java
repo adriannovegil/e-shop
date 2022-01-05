@@ -11,6 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 public class BrandDto {
-  private UUID id;
-  private String name;
+
+    private UUID id;
+    private String name;
 }

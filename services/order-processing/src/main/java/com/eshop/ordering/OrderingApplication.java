@@ -15,7 +15,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 @EntityScan
 public class OrderingApplication {
-  public static void main(String[] args) {
-    SpringApplication.run(OrderingApplication.class, args);
-  }
+
+    public static void main(String[] args) {
+        SpringApplication.run(OrderingApplication.class, args);
+    }
 }

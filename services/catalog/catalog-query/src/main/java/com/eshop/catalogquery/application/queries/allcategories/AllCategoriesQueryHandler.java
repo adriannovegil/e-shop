@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AllCategoriesQueryHandler implements QueryHandler<Iterable<Category>, AllCategoryQuery> {
 
-  private final CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-  @Override
-  public Iterable<Category> handle(AllCategoryQuery query) {
-    return categoryRepository.findAll();
-  }
+    @Override
+    public Iterable<Category> handle(AllCategoryQuery query) {
+        return categoryRepository.findAll();
+    }
 }

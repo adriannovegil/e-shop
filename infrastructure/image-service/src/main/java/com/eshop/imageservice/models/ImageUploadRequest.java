@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class ImageUploadRequest {
-  private final String name;
-  private final String contentType;
-  private final byte[] content;
+
+    private final String name;
+    private final String contentType;
+    private final byte[] content;
 }

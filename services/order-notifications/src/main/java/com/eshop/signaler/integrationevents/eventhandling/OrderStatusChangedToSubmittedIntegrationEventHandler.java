@@ -13,23 +13,24 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class OrderStatusChangedToSubmittedIntegrationEventHandler
-    implements IntegrationEventHandler<OrderStatusChangedToSubmittedIntegrationEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToSubmittedIntegrationEventHandler.class);
-  private static final String DESTINATION = "/queue/order-submitted";
+        implements IntegrationEventHandler<OrderStatusChangedToSubmittedIntegrationEvent> {
 
-  private final SimpMessagingTemplate simpMessagingTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToSubmittedIntegrationEventHandler.class);
+    private static final String DESTINATION = "/queue/order-submitted";
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.submittedOrders}",
-      topics = "${spring.kafka.consumer.topic.submittedOrders}"
-  )
-  @Override
-  public void handle(OrderStatusChangedToSubmittedIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    simpMessagingTemplate.convertAndSendToUser(
-        event.getBuyerName(),
-        DESTINATION,
-        new OrderStatus(event.getOrderId(), event.getOrderStatus())
-    );
-  }
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    @KafkaListener(
+            groupId = "${app.kafka.group.submittedOrders}",
+            topics = "${spring.kafka.consumer.topic.submittedOrders}"
+    )
+    @Override
+    public void handle(OrderStatusChangedToSubmittedIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        simpMessagingTemplate.convertAndSendToUser(
+                event.getBuyerName(),
+                DESTINATION,
+                new OrderStatus(event.getOrderId(), event.getOrderStatus())
+        );
+    }
 }

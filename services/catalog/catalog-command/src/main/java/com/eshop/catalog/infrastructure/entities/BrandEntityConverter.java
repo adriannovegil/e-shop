@@ -6,16 +6,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class BrandEntityConverter implements EntityConverter<BrandEntity, Brand> {
 
-  @Override
-  public BrandEntity toEntity(Brand brand) {
-    return BrandEntity.builder()
-        .brandId(brand.getBrandId())
-        .name(brand.getName())
-        .build();
-  }
+    @Override
+    public BrandEntity toEntity(Brand brand) {
+        return BrandEntity.builder()
+                .brandId(brand.getBrandId())
+                .name(brand.getName())
+                .build();
+    }
 
-  @Override
-  public Brand fromEntity(BrandEntity entity) {
-    return Brand.of(entity.getBrandId(), entity.getName());
-  }
+    @Override
+    public Brand fromEntity(BrandEntity entity) {
+        return Brand.of(entity.getBrandId(), entity.getName());
+    }
 }

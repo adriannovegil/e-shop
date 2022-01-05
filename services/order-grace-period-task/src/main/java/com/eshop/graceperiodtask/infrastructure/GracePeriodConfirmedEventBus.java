@@ -12,13 +12,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 class GracePeriodConfirmedEventBus implements EventBus {
-  private static final Logger logger = LoggerFactory.getLogger(GracePeriodConfirmedEventBus.class);
-  private final KafkaTemplate<String, IntegrationEvent> kafkaTemplate;
-  private final KafkaTopics topics;
 
-  @Override
-  public void publish(IntegrationEvent event) {
-    logger.info("Publishing event: {} to kafka topic: {}", event.getClass().getSimpleName(), topics.getGracePeriodConfirmed());
-    kafkaTemplate.send(topics.getGracePeriodConfirmed(), event);
-  }
+    private static final Logger logger = LoggerFactory.getLogger(GracePeriodConfirmedEventBus.class);
+    private final KafkaTemplate<String, IntegrationEvent> kafkaTemplate;
+    private final KafkaTopics topics;
+
+    @Override
+    public void publish(IntegrationEvent event) {
+        logger.info("Publishing event: {} to kafka topic: {}", event.getClass().getSimpleName(), topics.getGracePeriodConfirmed());
+        kafkaTemplate.send(topics.getGracePeriodConfirmed(), event);
+    }
 }

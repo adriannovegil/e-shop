@@ -4,9 +4,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface BrandRepository {
-  Brand save(Brand brand);
 
-  Optional<Brand> findByName(String name);
+    Brand save(Brand brand);
 
-  Optional<Brand> findById(UUID id);
+    Optional<Brand> findByName(String name);
+
+    Optional<Brand> findById(UUID id);
 }

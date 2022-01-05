@@ -8,10 +8,11 @@ import reactor.core.publisher.Flux;
 @RequiredArgsConstructor
 @Service
 public class BestSellingProductsService {
-  private final AnalyticsApiService analyticsApiService;
 
-  public Flux<CatalogItem> topFive() {
-    return analyticsApiService.getTopFiveProducts();
-  }
+    private final AnalyticsApiService analyticsApiService;
+
+    public Flux<CatalogItem> topFive() {
+        return analyticsApiService.getTopFiveProducts();
+    }
 
 }

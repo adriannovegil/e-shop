@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 public class BasketItem {
+
     @JsonProperty
     private String id;
 
@@ -38,15 +39,14 @@ public class BasketItem {
     @JsonProperty
     private String pictureUrl;
 
-    public static OrderItemDTO toOrderItemDTO(BasketItem item)
-    {
+    public static OrderItemDTO toOrderItemDTO(BasketItem item) {
         return new OrderItemDTO(
-            item.getProductId(),
-            item.getProductName(),
-            item.getUnitPrice(),
-            0D,
-            item.getQuantity(),
-            item.getPictureUrl()
+                item.getProductId(),
+                item.getProductName(),
+                item.getUnitPrice(),
+                0D,
+                item.getQuantity(),
+                item.getPictureUrl()
         );
     }
 }

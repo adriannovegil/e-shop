@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableEurekaClient
 @EnableTransactionManagement
 public class BasketApplication {
-  public static void main(String[] args) {
-    SpringApplication.run(BasketApplication.class, args);
-  }
+
+    public static void main(String[] args) {
+        SpringApplication.run(BasketApplication.class, args);
+    }
 }

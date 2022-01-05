@@ -12,18 +12,18 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class AddressModel {
 
-  @Column(name = "street", nullable = false)
-  private String street;
+    @Column(name = "street", nullable = false)
+    private String street;
 
-  @Column(name = "city", nullable = false)
-  private String city;
+    @Column(name = "city", nullable = false)
+    private String city;
 
-  @Column(name = "state", nullable = false)
-  private String state;
+    @Column(name = "state", nullable = false)
+    private String state;
 
-  @Column(name = "country", nullable = false)
-  private String country;
+    @Column(name = "country", nullable = false)
+    private String country;
 
-  @Column(name = "zip_code", nullable = false)
-  private String zipCode;
+    @Column(name = "zip_code", nullable = false)
+    private String zipCode;
 }

@@ -15,8 +15,9 @@ import java.util.UUID;
 @Getter
 @Entity
 public class ClientRequest {
-  @Id
-  private UUID id;
-  private String name;
-  private LocalDateTime time;
+
+    @Id
+    private UUID id;
+    private String name;
+    private LocalDateTime time;
 }

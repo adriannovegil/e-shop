@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 class OrderCheckoutsEventBus extends KafkaEventBus {
 
-  public OrderCheckoutsEventBus(
-      KafkaTemplate<String, IntegrationEvent> kafkaTemplate,
-      KafkaTopics topics
-  ) {
-    super(kafkaTemplate, topics.getOrderCheckouts());
-  }
+    public OrderCheckoutsEventBus(
+            KafkaTemplate<String, IntegrationEvent> kafkaTemplate,
+            KafkaTopics topics
+    ) {
+        super(kafkaTemplate, topics.getOrderCheckouts());
+    }
 }

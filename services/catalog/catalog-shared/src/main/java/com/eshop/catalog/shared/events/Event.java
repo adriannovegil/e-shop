@@ -7,11 +7,12 @@ import java.util.UUID;
 
 @Getter
 public abstract class Event {
-  private final UUID id;
-  private final LocalDateTime occurredOn = LocalDateTime.now();
 
-  public Event(UUID id) {
-    this.id = id;
-  }
+    private final UUID id;
+    private final LocalDateTime occurredOn = LocalDateTime.now();
+
+    public Event(UUID id) {
+        this.id = id;
+    }
 
 }

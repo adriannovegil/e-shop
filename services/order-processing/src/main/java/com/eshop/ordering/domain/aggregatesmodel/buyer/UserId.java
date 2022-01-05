@@ -11,23 +11,24 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @ToString
 public class UserId extends ValueObject {
-  @Getter
-  private final String id;
 
-  private UserId(@NonNull String id) {
-    if (isEmpty(id)) {
-      throw new IllegalArgumentException("User id cannot be empty");
+    @Getter
+    private final String id;
+
+    private UserId(@NonNull String id) {
+        if (isEmpty(id)) {
+            throw new IllegalArgumentException("User id cannot be empty");
+        }
+
+        this.id = id;
     }
 
-    this.id = id;
-  }
+    public static UserId of(String id) {
+        return new UserId(id);
+    }
 
-  public static UserId of(String id) {
-    return new UserId(id);
-  }
-
-  @Override
-  protected List<Object> getEqualityComponents() {
-    return List.of(id);
-  }
+    @Override
+    protected List<Object> getEqualityComponents() {
+        return List.of(id);
+    }
 }

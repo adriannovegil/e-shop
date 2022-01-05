@@ -11,7 +11,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 public class ProductPriceChangedIntegrationEvent extends IntegrationEvent {
-  private UUID productId;
-  private Double newPrice;
-  private Double oldPrice;
+
+    private UUID productId;
+    private Double newPrice;
+    private Double oldPrice;
 }

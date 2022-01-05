@@ -4,11 +4,12 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface BasketRepository {
-  Optional<CustomerBasket> getBasket(String customerId);
 
-  Set<String> getUsers();
+    Optional<CustomerBasket> getBasket(String customerId);
 
-  CustomerBasket updateBasket(CustomerBasket basket);
+    Set<String> getUsers();
 
-  void deleteBasket(String customerId);
+    CustomerBasket updateBasket(CustomerBasket basket);
+
+    void deleteBasket(String customerId);
 }

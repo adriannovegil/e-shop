@@ -15,37 +15,38 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Component
 public class ProductPriceChangedIntegrationEventHandler implements IntegrationEventHandler<ProductPriceChangedIntegrationEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(ProductPriceChangedIntegrationEventHandler.class);
 
-  private final BasketRepository basketRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProductPriceChangedIntegrationEventHandler.class);
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.productPriceChanges}",
-      topics = "${spring.kafka.consumer.topic.productPriceChanges}"
-  )
-  @Override
-  public void handle(ProductPriceChangedIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+    private final BasketRepository basketRepository;
 
-    basketRepository.getUsers().forEach(id -> basketRepository.getBasket(id)
-        .ifPresent(basket -> updatePriceInBasketItems(
-            event.getProductId(),
-            event.getNewPrice(),
-            event.getOldPrice(),
-            basket
+    @KafkaListener(
+            groupId = "${app.kafka.group.productPriceChanges}",
+            topics = "${spring.kafka.consumer.topic.productPriceChanges}"
+    )
+    @Override
+    public void handle(ProductPriceChangedIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+
+        basketRepository.getUsers().forEach(id -> basketRepository.getBasket(id)
+                .ifPresent(basket -> updatePriceInBasketItems(
+                event.getProductId(),
+                event.getNewPrice(),
+                event.getOldPrice(),
+                basket
         ))
-    );
-  }
+        );
+    }
 
-  private void updatePriceInBasketItems(UUID productId, Double newPrice, Double oldPrice, CustomerBasket basket) {
-    basket.getItems().stream().filter(x -> x.getProductId().equals(productId))
-        .forEach(item -> {
-          if (item.getUnitPrice().equals(oldPrice)) {
-            var originalPrice = item.getUnitPrice();
-            item.setUnitPrice(newPrice);
-            item.setOldUnitPrice(originalPrice);
-          }
-        });
-    basketRepository.updateBasket(basket);
-  }
+    private void updatePriceInBasketItems(UUID productId, Double newPrice, Double oldPrice, CustomerBasket basket) {
+        basket.getItems().stream().filter(x -> x.getProductId().equals(productId))
+                .forEach(item -> {
+                    if (item.getUnitPrice().equals(oldPrice)) {
+                        var originalPrice = item.getUnitPrice();
+                        item.setUnitPrice(newPrice);
+                        item.setOldUnitPrice(originalPrice);
+                    }
+                });
+        basketRepository.updateBasket(basket);
+    }
 }

@@ -15,18 +15,19 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("api/v1/orders")
 public class OrderController {
-  private final BasketApiService basketApiService;
-  private final OrderingApiService orderingApiService;
 
-  @GetMapping("draft/{basketId}")
-  public Mono<OrderData> getOrderDraft(@PathVariable String basketId) {
-    if (StringUtils.isEmpty(basketId)) {
-      throw new IllegalArgumentException("The basketId is not valid"); // TODO bad request
+    private final BasketApiService basketApiService;
+    private final OrderingApiService orderingApiService;
+
+    @GetMapping("draft/{basketId}")
+    public Mono<OrderData> getOrderDraft(@PathVariable String basketId) {
+        if (StringUtils.isEmpty(basketId)) {
+            throw new IllegalArgumentException("The basketId is not valid"); // TODO bad request
+        }
+
+        return basketApiService.getById(basketId)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("No basket found for id " + basketId)))
+                .flatMap(orderingApiService::getOrderDraft);
     }
-
-    return basketApiService.getById(basketId)
-        .switchIfEmpty(Mono.error(new IllegalArgumentException("No basket found for id " + basketId)))
-        .flatMap(orderingApiService::getOrderDraft);
-  }
 
 }

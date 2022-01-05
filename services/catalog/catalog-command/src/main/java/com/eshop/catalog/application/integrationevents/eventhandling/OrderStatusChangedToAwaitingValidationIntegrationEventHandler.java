@@ -18,49 +18,50 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class OrderStatusChangedToAwaitingValidationIntegrationEventHandler {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToAwaitingValidationIntegrationEventHandler.class);
 
-  private final CatalogItemRepository catalogItemRepository;
-  private final IntegrationEventPublisher integrationEventService;
-  private final KafkaTopics kafkaTopics;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToAwaitingValidationIntegrationEventHandler.class);
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.ordersWaitingValidation}",
-      topics = "${spring.kafka.consumer.topic.ordersWaitingForValidation}"
-  )
-  @Transactional
-  public void handle(OrderStatusChangedToAwaitingValidationIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    var confirmedOrderStockItems = new ArrayList<ConfirmedOrderStockItem>();
+    private final CatalogItemRepository catalogItemRepository;
+    private final IntegrationEventPublisher integrationEventService;
+    private final KafkaTopics kafkaTopics;
 
-    event.getOrderStockItems().forEach(orderStockItem -> catalogItemRepository
-        .load(orderStockItem.getProductId())
-        .ifPresent(catalogItem ->
-            confirmedOrderStockItems.add(createConfirmedOrderStockItem(catalogItem, orderStockItem)))
-    );
+    @KafkaListener(
+            groupId = "${app.kafka.group.ordersWaitingValidation}",
+            topics = "${spring.kafka.consumer.topic.ordersWaitingForValidation}"
+    )
+    @Transactional
+    public void handle(OrderStatusChangedToAwaitingValidationIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        var confirmedOrderStockItems = new ArrayList<ConfirmedOrderStockItem>();
 
-    if (allItemsAvailable(confirmedOrderStockItems)) {
-      integrationEventService.publish(
-          kafkaTopics.getOrderStockConfirmed(),
-          new OrderStockConfirmedIntegrationEvent(event.getOrderId())
-      );
-    } else {
-      integrationEventService.publish(kafkaTopics.getOrderStockRejected(),
-          new OrderStockRejectedIntegrationEvent(event.getOrderId(), confirmedOrderStockItems));
+        event.getOrderStockItems().forEach(orderStockItem -> catalogItemRepository
+                .load(orderStockItem.getProductId())
+                .ifPresent(catalogItem
+                        -> confirmedOrderStockItems.add(createConfirmedOrderStockItem(catalogItem, orderStockItem)))
+        );
+
+        if (allItemsAvailable(confirmedOrderStockItems)) {
+            integrationEventService.publish(
+                    kafkaTopics.getOrderStockConfirmed(),
+                    new OrderStockConfirmedIntegrationEvent(event.getOrderId())
+            );
+        } else {
+            integrationEventService.publish(kafkaTopics.getOrderStockRejected(),
+                    new OrderStockRejectedIntegrationEvent(event.getOrderId(), confirmedOrderStockItems));
+        }
+
     }
 
-  }
+    private ConfirmedOrderStockItem createConfirmedOrderStockItem(CatalogItem catalogItem, OrderStockItem orderStockItem) {
+        return new ConfirmedOrderStockItem(catalogItem.getId(), hasStock(catalogItem, orderStockItem));
+    }
 
-  private ConfirmedOrderStockItem createConfirmedOrderStockItem(CatalogItem catalogItem, OrderStockItem orderStockItem) {
-    return new ConfirmedOrderStockItem(catalogItem.getId(), hasStock(catalogItem, orderStockItem));
-  }
+    private boolean hasStock(CatalogItem catalogItem, OrderStockItem orderStockItem) {
+        return catalogItem.getAvailableStock().getValue() >= orderStockItem.getUnits();
+    }
 
-  private boolean hasStock(CatalogItem catalogItem, OrderStockItem orderStockItem) {
-    return catalogItem.getAvailableStock().getValue() >= orderStockItem.getUnits();
-  }
-
-  private boolean allItemsAvailable(List<ConfirmedOrderStockItem> confirmedOrderStockItems) {
-    return confirmedOrderStockItems.stream().allMatch(ConfirmedOrderStockItem::getHasStock);
-  }
+    private boolean allItemsAvailable(List<ConfirmedOrderStockItem> confirmedOrderStockItems) {
+        return confirmedOrderStockItems.stream().allMatch(ConfirmedOrderStockItem::getHasStock);
+    }
 
 }

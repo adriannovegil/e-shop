@@ -10,9 +10,9 @@ import java.util.UUID;
 
 public record ChangeProductNameCommand(
     @JsonProperty
-    @NotNull
+        @NotNull
     UUID productId,
     @JsonProperty
-    @NotEmpty String name
+        @NotEmpty String name
 ) implements Command<CatalogItemResponse> {
 }

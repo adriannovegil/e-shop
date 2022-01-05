@@ -12,25 +12,26 @@ import org.springframework.kafka.annotation.KafkaListener;
 @EventHandler
 @RequiredArgsConstructor
 public class OrderStockConfirmedIntegrationEventHandler {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStockConfirmedIntegrationEventHandler.class);
 
-  private final Pipeline pipeline;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStockConfirmedIntegrationEventHandler.class);
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.orderStockConfirmed}",
-      topics = "${spring.kafka.consumer.topic.orderStockConfirmed}"
-  )
-  public void handle(OrderStockConfirmedIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+    private final Pipeline pipeline;
 
-    pipeline.send(new SetStockConfirmedOrderStatusCommand(event.getOrderId()));
-  }
+    @KafkaListener(
+            groupId = "${app.kafka.group.orderStockConfirmed}",
+            topics = "${spring.kafka.consumer.topic.orderStockConfirmed}"
+    )
+    public void handle(OrderStockConfirmedIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.orderStockConfirmed}-dlt",
-      topics = "${spring.kafka.consumer.topic.orderStockConfirmed}.DLT"
-  )
-  public void handleDlt(OrderStockConfirmedIntegrationEvent event) {
-    logger.info("DLT - Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-  }
+        pipeline.send(new SetStockConfirmedOrderStatusCommand(event.getOrderId()));
+    }
+
+    @KafkaListener(
+            groupId = "${app.kafka.group.orderStockConfirmed}-dlt",
+            topics = "${spring.kafka.consumer.topic.orderStockConfirmed}.DLT"
+    )
+    public void handleDlt(OrderStockConfirmedIntegrationEvent event) {
+        logger.info("DLT - Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+    }
 }

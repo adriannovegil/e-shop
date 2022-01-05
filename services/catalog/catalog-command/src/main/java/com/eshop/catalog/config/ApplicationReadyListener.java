@@ -12,10 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Profile(CatalogProfiles.DEV)
 public class ApplicationReadyListener implements ApplicationListener<ApplicationReadyEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(ApplicationReadyListener.class);
 
-  @Override
-  public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
-    logger.info("Catalog service is up and running...");
-  }
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationReadyListener.class);
+
+    @Override
+    public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
+        logger.info("Catalog service is up and running...");
+    }
 }

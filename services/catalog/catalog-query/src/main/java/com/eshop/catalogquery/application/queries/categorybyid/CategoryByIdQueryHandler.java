@@ -12,10 +12,10 @@ import java.util.Optional;
 @Component
 public class CategoryByIdQueryHandler implements QueryHandler<Optional<Category>, CategoryByIdQuery> {
 
-  private final CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-  @Override
-  public Optional<Category> handle(CategoryByIdQuery query) {
-    return categoryRepository.findById(query.categoryId());
-  }
+    @Override
+    public Optional<Category> handle(CategoryByIdQuery query) {
+        return categoryRepository.findById(query.categoryId());
+    }
 }

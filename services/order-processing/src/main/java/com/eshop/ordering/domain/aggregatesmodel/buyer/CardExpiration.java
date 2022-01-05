@@ -11,22 +11,23 @@ import java.util.List;
 @Getter
 @ToString
 public class CardExpiration extends ValueObject {
-  private final LocalDate date;
 
-  private CardExpiration(LocalDate date) {
-    if (date.isBefore(LocalDate.now())) {
-      throw new OrderingDomainException("The card is expired");
+    private final LocalDate date;
+
+    private CardExpiration(LocalDate date) {
+        if (date.isBefore(LocalDate.now())) {
+            throw new OrderingDomainException("The card is expired");
+        }
+
+        this.date = date;
     }
 
-    this.date = date;
-  }
+    public static CardExpiration of(LocalDate date) {
+        return new CardExpiration(date);
+    }
 
-  public static CardExpiration of(LocalDate date) {
-    return new CardExpiration(date);
-  }
-
-  @Override
-  protected List<Object> getEqualityComponents() {
-    return List.of(date);
-  }
+    @Override
+    protected List<Object> getEqualityComponents() {
+        return List.of(date);
+    }
 }

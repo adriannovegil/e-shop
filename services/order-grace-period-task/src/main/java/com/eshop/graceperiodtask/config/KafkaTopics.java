@@ -10,5 +10,6 @@ import org.springframework.stereotype.Component;
 @Data
 @RefreshScope
 public class KafkaTopics {
-  private String gracePeriodConfirmed;
+
+    private String gracePeriodConfirmed;
 }

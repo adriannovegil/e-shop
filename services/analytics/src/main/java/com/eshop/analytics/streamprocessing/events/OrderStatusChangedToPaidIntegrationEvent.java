@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class OrderStatusChangedToPaidIntegrationEvent {
-  private String orderId;
+
+    private String orderId;
 }

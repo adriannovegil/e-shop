@@ -14,27 +14,28 @@ import static java.util.Optional.ofNullable;
 @RequiredArgsConstructor
 @Service
 class OrdersStoreService implements OrdersService {
-  private final InteractiveQueryService interactiveQueryService;
 
-  @Override
-  public Order getSubmittedOrder(String orderId) {
-    final ReadOnlyKeyValueStore<String, Order> submittedOrdersStore = interactiveQueryService.getQueryableStore(
-        SUBMITTED_ORDERS_STORE,
-        QueryableStoreTypes.keyValueStore()
-    );
+    private final InteractiveQueryService interactiveQueryService;
 
-    return submittedOrdersStore.get(orderId);
-  }
+    @Override
+    public Order getSubmittedOrder(String orderId) {
+        final ReadOnlyKeyValueStore<String, Order> submittedOrdersStore = interactiveQueryService.getQueryableStore(
+                SUBMITTED_ORDERS_STORE,
+                QueryableStoreTypes.keyValueStore()
+        );
 
-  @Override
-  public Order getPaidOrder(String orderId) {
-    final ReadOnlyKeyValueStore<String, String> paidOrderIdsStore = interactiveQueryService.getQueryableStore(
-        PAID_ORDER_IDS_STORE,
-        QueryableStoreTypes.keyValueStore()
-    );
+        return submittedOrdersStore.get(orderId);
+    }
 
-    return ofNullable(paidOrderIdsStore.get(orderId))
-        .map(this::getSubmittedOrder)
-        .orElse(null);
-  }
+    @Override
+    public Order getPaidOrder(String orderId) {
+        final ReadOnlyKeyValueStore<String, String> paidOrderIdsStore = interactiveQueryService.getQueryableStore(
+                PAID_ORDER_IDS_STORE,
+                QueryableStoreTypes.keyValueStore()
+        );
+
+        return ofNullable(paidOrderIdsStore.get(orderId))
+                .map(this::getSubmittedOrder)
+                .orElse(null);
+    }
 }

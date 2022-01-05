@@ -12,10 +12,10 @@ import java.util.Optional;
 @Component
 public class BrandByIdQueryHandler implements QueryHandler<Optional<Brand>, BrandByIdQuery> {
 
-  private final BrandRepository brandRepository;
+    private final BrandRepository brandRepository;
 
-  @Override
-  public Optional<Brand> handle(BrandByIdQuery query) {
-    return brandRepository.findById(query.brandId());
-  }
+    @Override
+    public Optional<Brand> handle(BrandByIdQuery query) {
+        return brandRepository.findById(query.brandId());
+    }
 }

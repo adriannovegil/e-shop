@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AllBrandsQueryHandler implements QueryHandler<Iterable<Brand>, AllBrandsQuery> {
 
-  private final BrandRepository brandRepository;
+    private final BrandRepository brandRepository;
 
-  @Override
-  public Iterable<Brand> handle(AllBrandsQuery query) {
-    return brandRepository.findAll();
-  }
+    @Override
+    public Iterable<Brand> handle(AllBrandsQuery query) {
+        return brandRepository.findAll();
+    }
 }

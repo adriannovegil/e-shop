@@ -18,24 +18,25 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class WebSocketConnectInterceptor implements ChannelInterceptor {
-  private final JwtDecoder jwtDecoderByIssuerUri;
-  @Value("${app.security.jwt.user-name-attribute}")
-  private String userNameAttribute;
 
-  @Override
-  public Message<?> preSend(Message<?> message, MessageChannel channel) {
-    StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+    private final JwtDecoder jwtDecoderByIssuerUri;
+    @Value("${app.security.jwt.user-name-attribute}")
+    private String userNameAttribute;
 
-    if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-      List<String> authorization = accessor.getNativeHeader("Authorization");
-      String accessToken = authorization.get(0).split(" ")[1];
-      var jwt = jwtDecoderByIssuerUri.decode(accessToken);
-      JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-      converter.setPrincipalClaimName(userNameAttribute);
-      Authentication authentication = converter.convert(jwt);
-      accessor.setUser(authentication);
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
+        if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
+            List<String> authorization = accessor.getNativeHeader("Authorization");
+            String accessToken = authorization.get(0).split(" ")[1];
+            var jwt = jwtDecoderByIssuerUri.decode(accessToken);
+            JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+            converter.setPrincipalClaimName(userNameAttribute);
+            Authentication authentication = converter.convert(jwt);
+            accessor.setUser(authentication);
+        }
+
+        return message;
     }
-
-    return message;
-  }
 }

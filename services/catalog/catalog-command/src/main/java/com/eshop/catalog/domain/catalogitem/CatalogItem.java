@@ -22,163 +22,163 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Aggregate
 public class CatalogItem extends AggregateRoot {
-  private ProductName name;
-  private String description;
-  @Getter
-  private Price price;
-  private String pictureFileName;
-  @Getter
-  private Units availableStock;
-  private Category category;
-  private Brand brand;
 
-  public CatalogItem(
-      @NonNull ProductName productName,
-      String description,
-      @NonNull Price price,
-      String pictureFileName,
-      @NonNull Units availableStock,
-      @NonNull Category category,
-      @NonNull Brand brand
-  ) {
-    super(UUID.randomUUID());
-    setName(productName);
-    setDescription(description);
-    setPrice(price);
-    setPictureFileName(pictureFileName);
-    setAvailableStock(availableStock);
-    setCategory(category);
-    setBrand(brand);
+    private ProductName name;
+    private String description;
+    @Getter
+    private Price price;
+    private String pictureFileName;
+    @Getter
+    private Units availableStock;
+    private Category category;
+    private Brand brand;
 
-    apply(new
-        CatalogItemCreated(
-        id,
-        name.getName(),
-        description,
-        price.getValue(),
-        pictureFileName,
-        availableStock.getValue(),
-        new CategoryDto(category.getCategoryId(), category.getName()),
-        new BrandDto(brand.getBrandId(), brand.getName())
-    ));
-  }
+    public CatalogItem(
+            @NonNull ProductName productName,
+            String description,
+            @NonNull Price price,
+            String pictureFileName,
+            @NonNull Units availableStock,
+            @NonNull Category category,
+            @NonNull Brand brand
+    ) {
+        super(UUID.randomUUID());
+        setName(productName);
+        setDescription(description);
+        setPrice(price);
+        setPictureFileName(pictureFileName);
+        setAvailableStock(availableStock);
+        setCategory(category);
+        setBrand(brand);
 
-  /**
-   * If there is sufficient stock of an item, then the integer returned at the end of this call should be the same as
-   * quantityDesired.
-   * In the event that there isn't sufficient stock available, the method will remove whatever stock is available
-   * and return that quantity to the client.
-   * In this case, it is the responsibility of the client to determine if the amount that is returned is the same as
-   * quantityDesired.
-   */
-  public Units removeStock(Units quantityDesired) {
-    checkRule(new AvailableStockMustNotBeEmpty(name, availableStock));
-    checkRule(new QuantityMustBeGreaterThanZero(quantityDesired));
+        apply(new CatalogItemCreated(
+                id,
+                name.getName(),
+                description,
+                price.getValue(),
+                pictureFileName,
+                availableStock.getValue(),
+                new CategoryDto(category.getCategoryId(), category.getName()),
+                new BrandDto(brand.getBrandId(), brand.getName())
+        ));
+    }
 
-    final var updatedStock = quantityDesired.greaterThan(availableStock)
-        ? Units.empty()
-        : availableStock.subtract(quantityDesired);
+    /**
+     * If there is sufficient stock of an item, then the integer returned at the
+     * end of this call should be the same as quantityDesired. In the event that
+     * there isn't sufficient stock available, the method will remove whatever
+     * stock is available and return that quantity to the client. In this case,
+     * it is the responsibility of the client to determine if the amount that is
+     * returned is the same as quantityDesired.
+     */
+    public Units removeStock(Units quantityDesired) {
+        checkRule(new AvailableStockMustNotBeEmpty(name, availableStock));
+        checkRule(new QuantityMustBeGreaterThanZero(quantityDesired));
 
-    apply(new StockRemoved(id, updatedStock.getValue()));
+        final var updatedStock = quantityDesired.greaterThan(availableStock)
+                ? Units.empty()
+                : availableStock.subtract(quantityDesired);
 
-    return updatedStock;
-  }
+        apply(new StockRemoved(id, updatedStock.getValue()));
 
-  /**
-   * Increments the quantity of a particular item in inventory.
-   *
-   * @return the quantity that has been added to stock
-   */
-  public Units addStock(Units quantity) {
-    checkRule(new QuantityMustBeGreaterThanZero(quantity));
-    final var originalStock = availableStock;
-    final var updatedStock = availableStock.add(quantity);
+        return updatedStock;
+    }
 
-    apply(new StockAdded(id, updatedStock.getValue()));
+    /**
+     * Increments the quantity of a particular item in inventory.
+     *
+     * @return the quantity that has been added to stock
+     */
+    public Units addStock(Units quantity) {
+        checkRule(new QuantityMustBeGreaterThanZero(quantity));
+        final var originalStock = availableStock;
+        final var updatedStock = availableStock.add(quantity);
 
-    return availableStock.subtract(originalStock);
-  }
+        apply(new StockAdded(id, updatedStock.getValue()));
 
-  public void changePrice(@NonNull Price newPrice) {
-    requireNonNull(price, "Price cannot be null");
-    checkRule(new PriceMustBeGreaterThanZero(newPrice));
+        return availableStock.subtract(originalStock);
+    }
 
-    apply(new ProductPriceChanged(id, newPrice.getValue()));
-  }
+    public void changePrice(@NonNull Price newPrice) {
+        requireNonNull(price, "Price cannot be null");
+        checkRule(new PriceMustBeGreaterThanZero(newPrice));
 
-  public void changeName(@NonNull ProductName name) {
-    requireNonNull(price, "Product name cannot be null");
+        apply(new ProductPriceChanged(id, newPrice.getValue()));
+    }
 
-    apply(new ProductNameChanged(id, name.getName()));
-  }
+    public void changeName(@NonNull ProductName name) {
+        requireNonNull(price, "Product name cannot be null");
 
-  @SuppressWarnings("unused")
-  @EventSourcingHandler
-  private void on(CatalogItemCreated event) {
-    this.id = event.getId();
-    setName(ProductName.of(event.getName()));
-    setDescription(event.getDescription());
-    setPrice(Price.of(event.getPrice()));
-    setPictureFileName(event.getPictureFileName());
-    setAvailableStock(Units.of(event.getAvailableStock()));
-    setCategory(Category.of(event.getCategory().getId(), event.getCategory().getName()));
-    setBrand(Brand.of(event.getBrand().getId(), event.getBrand().getName()));
-  }
+        apply(new ProductNameChanged(id, name.getName()));
+    }
 
-  @SuppressWarnings("unused")
-  @EventSourcingHandler
-  private void on(StockAdded event) {
-    setAvailableStock(Units.of(event.getAvailableStock()));
-  }
+    @SuppressWarnings("unused")
+    @EventSourcingHandler
+    private void on(CatalogItemCreated event) {
+        this.id = event.getId();
+        setName(ProductName.of(event.getName()));
+        setDescription(event.getDescription());
+        setPrice(Price.of(event.getPrice()));
+        setPictureFileName(event.getPictureFileName());
+        setAvailableStock(Units.of(event.getAvailableStock()));
+        setCategory(Category.of(event.getCategory().getId(), event.getCategory().getName()));
+        setBrand(Brand.of(event.getBrand().getId(), event.getBrand().getName()));
+    }
 
-  @SuppressWarnings("unused")
-  @EventSourcingHandler
-  private void on(StockRemoved event) {
-    setAvailableStock(Units.of(event.getAvailableStock()));
-  }
+    @SuppressWarnings("unused")
+    @EventSourcingHandler
+    private void on(StockAdded event) {
+        setAvailableStock(Units.of(event.getAvailableStock()));
+    }
 
-  @SuppressWarnings("unused")
-  @EventSourcingHandler
-  private void on(ProductNameChanged event) {
-    setName(ProductName.of(event.getName()));
-  }
+    @SuppressWarnings("unused")
+    @EventSourcingHandler
+    private void on(StockRemoved event) {
+        setAvailableStock(Units.of(event.getAvailableStock()));
+    }
 
-  @SuppressWarnings("unused")
-  @EventSourcingHandler
-  private void on(ProductPriceChanged event) {
-    setPrice(Price.of(event.getPrice()));
-  }
+    @SuppressWarnings("unused")
+    @EventSourcingHandler
+    private void on(ProductNameChanged event) {
+        setName(ProductName.of(event.getName()));
+    }
 
-  private void setName(ProductName name) {
-    requireNonNull(name, "Product name cannot be null");
-    this.name = name;
-  }
+    @SuppressWarnings("unused")
+    @EventSourcingHandler
+    private void on(ProductPriceChanged event) {
+        setPrice(Price.of(event.getPrice()));
+    }
 
-  private void setDescription(String description) {
-    this.description = description;
-  }
+    private void setName(ProductName name) {
+        requireNonNull(name, "Product name cannot be null");
+        this.name = name;
+    }
 
-  private void setPrice(Price price) {
-    this.price = price;
-  }
+    private void setDescription(String description) {
+        this.description = description;
+    }
 
-  private void setPictureFileName(String pictureFileName) {
-    this.pictureFileName = pictureFileName;
-  }
+    private void setPrice(Price price) {
+        this.price = price;
+    }
 
-  private void setAvailableStock(Units availableStock) {
-    requireNonNull(availableStock, "Available stock cannot be null");
-    this.availableStock = availableStock;
-  }
+    private void setPictureFileName(String pictureFileName) {
+        this.pictureFileName = pictureFileName;
+    }
 
-  private void setCategory(Category category) {
-    requireNonNull(category, "Category cannot be null");
-    this.category = category;
-  }
+    private void setAvailableStock(Units availableStock) {
+        requireNonNull(availableStock, "Available stock cannot be null");
+        this.availableStock = availableStock;
+    }
 
-  private void setBrand(Brand brand) {
-    requireNonNull(brand, "Brand cannot be null");
-    this.brand = brand;
-  }
+    private void setCategory(Category category) {
+        requireNonNull(category, "Category cannot be null");
+        this.category = category;
+    }
+
+    private void setBrand(Brand brand) {
+        requireNonNull(brand, "Brand cannot be null");
+        this.brand = brand;
+    }
 
 }

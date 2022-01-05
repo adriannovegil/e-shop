@@ -12,22 +12,23 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Getter
 @ToString
 public class CardNumber extends ValueObject {
-  private final String value;
 
-  private CardNumber(String value) {
-    if (isEmpty(value)) {
-      throw new OrderingDomainException("Card number cannot be empty");
+    private final String value;
+
+    private CardNumber(String value) {
+        if (isEmpty(value)) {
+            throw new OrderingDomainException("Card number cannot be empty");
+        }
+
+        this.value = value;
     }
 
-    this.value = value;
-  }
+    public static CardNumber of(String value) {
+        return new CardNumber(value);
+    }
 
-  public static CardNumber of(String value) {
-    return new CardNumber(value);
-  }
-
-  @Override
-  protected List<Object> getEqualityComponents() {
-    return List.of(value);
-  }
+    @Override
+    protected List<Object> getEqualityComponents() {
+        return List.of(value);
+    }
 }

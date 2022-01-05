@@ -11,19 +11,21 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class OrderStatusChangedToSubmittedIntegrationEvent extends IntegrationEvent {
-  private String orderId;
-  private String orderStatus;
-  private String buyerName;
-  private Double totalPrice;
-  private List<OrderItemDto> orderItems;
 
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Getter
-  public static class OrderItemDto {
-    private String id;
-    private String name;
-    private Double unitPrice;
-    private Integer units;
-  }
+    private String orderId;
+    private String orderStatus;
+    private String buyerName;
+    private Double totalPrice;
+    private List<OrderItemDto> orderItems;
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class OrderItemDto {
+
+        private String id;
+        private String name;
+        private Double unitPrice;
+        private Integer units;
+    }
 }

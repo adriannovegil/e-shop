@@ -8,12 +8,12 @@ public record PriceMustBeGreaterThanZero(
 ) implements BusinessRule {
 
   @Override
-  public boolean broken() {
+        public boolean broken() {
     return price.isZero();
   }
 
   @Override
-  public String message() {
+        public String message() {
     return "Product price must be greater than zero";
   }
 }

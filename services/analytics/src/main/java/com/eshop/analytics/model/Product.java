@@ -10,5 +10,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 public class Product {
-  private UUID id;
+
+    private UUID id;
 }

@@ -11,17 +11,18 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class ChangeProductNameCommandHandler implements CatalogCommandHandler<CatalogItemResponse, ChangeProductNameCommand> {
-  private final CatalogItemRepository catalogItemRepository;
 
-  @CommandHandler
-  public CatalogItemResponse handle(ChangeProductNameCommand command) {
-    final var catalogItem = catalogItemRepository.loadAggregate(command.productId());
+    private final CatalogItemRepository catalogItemRepository;
 
-    catalogItem.execute(c -> c.changeName(ProductName.of(command.name())));
+    @CommandHandler
+    public CatalogItemResponse handle(ChangeProductNameCommand command) {
+        final var catalogItem = catalogItemRepository.loadAggregate(command.productId());
 
-    return CatalogItemResponse.builder()
-        .productId(command.productId())
-        .version(catalogItem.version())
-        .build();
-  }
+        catalogItem.execute(c -> c.changeName(ProductName.of(command.name())));
+
+        return CatalogItemResponse.builder()
+                .productId(command.productId())
+                .version(catalogItem.version())
+                .build();
+    }
 }

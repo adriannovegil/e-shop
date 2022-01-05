@@ -8,17 +8,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class IdentityServiceImpl implements IdentityService {
-  @Value("${app.security.jwt.user-name-attribute}")
-  private String userNameAttribute;
 
-  @Override
-  public String getUserIdentity() {
-    return SecurityContextHolder.getContext().getAuthentication().getName();
-  }
+    @Value("${app.security.jwt.user-name-attribute}")
+    private String userNameAttribute;
 
-  @Override
-  public String getUserName() {
-    var token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    return token.getClaims().get(userNameAttribute).toString();
-  }
+    @Override
+    public String getUserIdentity() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    @Override
+    public String getUserName() {
+        var token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return token.getClaims().get(userNameAttribute).toString();
+    }
 }

@@ -14,21 +14,22 @@ import javax.validation.Validation;
 @AllArgsConstructor
 @Order(1)
 public class ValidationMiddleware implements Command.Middleware {
-  private static final Logger logger = LoggerFactory.getLogger(ValidationMiddleware.class);
 
-  @Override
-  public <R, C extends Command<R>> R invoke(C command, Next<R> next) {
-    logger.info("Validating command {}", command.getClass().getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(ValidationMiddleware.class);
 
-    var factory = Validation.buildDefaultValidatorFactory();
-    var validator = factory.getValidator();
-    var violations = validator.validate(command);
+    @Override
+    public <R, C extends Command<R>> R invoke(C command, Next<R> next) {
+        logger.info("Validating command {}", command.getClass().getSimpleName());
 
-    if (!violations.isEmpty()) {
-      throw new ConstraintViolationException(violations);
+        var factory = Validation.buildDefaultValidatorFactory();
+        var validator = factory.getValidator();
+        var violations = validator.validate(command);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
+        return next.invoke();
     }
-
-    return next.invoke();
-  }
 
 }

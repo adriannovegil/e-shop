@@ -10,14 +10,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class KafkaIntegrationEventPublisher implements IntegrationEventPublisher {
-  private static final Logger logger = LoggerFactory.getLogger(KafkaIntegrationEventPublisher.class);
 
-  private final KafkaTemplate<String, IntegrationEvent> kafkaTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(KafkaIntegrationEventPublisher.class);
 
-  @Override
-  public void publish(String topic, IntegrationEvent event) {
-    logger.info("Publishing integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    kafkaTemplate.send(topic, event);
-  }
+    private final KafkaTemplate<String, IntegrationEvent> kafkaTemplate;
+
+    @Override
+    public void publish(String topic, IntegrationEvent event) {
+        logger.info("Publishing integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        kafkaTemplate.send(topic, event);
+    }
 
 }

@@ -7,6 +7,6 @@ import javax.validation.constraints.NotNull;
 
 public record AddBrandCommand(
     @JsonProperty
-    @NotNull String name
+        @NotNull String name
 ) implements Command<AddBrandResponse> {
 }

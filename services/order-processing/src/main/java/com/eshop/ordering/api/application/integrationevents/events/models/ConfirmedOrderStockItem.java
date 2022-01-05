@@ -10,10 +10,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 public class ConfirmedOrderStockItem {
-  private UUID productId;
-  private boolean hasStock;
 
-  public boolean hasStock() {
-    return hasStock;
-  }
+    private UUID productId;
+    private boolean hasStock;
+
+    public boolean hasStock() {
+        return hasStock;
+    }
 }

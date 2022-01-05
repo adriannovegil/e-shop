@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public record ChangePriceCommand(
     @JsonProperty
-    @NotNull
+        @NotNull
     UUID productId,
     @JsonProperty
-    @NotNull Double price
+        @NotNull Double price
 ) implements Command<CatalogItemResponse> {
 }

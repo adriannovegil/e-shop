@@ -4,5 +4,6 @@ import com.eshop.gateway.models.BasketData;
 import com.eshop.gateway.models.OrderData;
 
 public interface OrderApiClient {
-  OrderData getOrderDraftFromBasket(BasketData basket);
+
+    OrderData getOrderDraftFromBasket(BasketData basket);
 }

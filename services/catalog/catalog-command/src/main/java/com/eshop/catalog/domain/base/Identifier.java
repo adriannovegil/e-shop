@@ -10,24 +10,25 @@ import java.util.UUID;
  * Base class for value objects that are used as identifiers.
  */
 public abstract class Identifier extends ValueObject {
-  private final UUID uuid;
 
-  protected Identifier(@NonNull UUID uuid) {
-    this.uuid = Objects.requireNonNull(uuid, "uuid must not be null");
-  }
+    private final UUID uuid;
 
-  @NonNull
-  public String getUuid() {
-    return uuid.toString();
-  }
+    protected Identifier(@NonNull UUID uuid) {
+        this.uuid = Objects.requireNonNull(uuid, "uuid must not be null");
+    }
 
-  @NonNull
-  public UUID getValue() {
-    return uuid;
-  }
+    @NonNull
+    public String getUuid() {
+        return uuid.toString();
+    }
 
-  @Override
-  protected List<Object> getEqualityComponents() {
-    return List.of(uuid);
-  }
+    @NonNull
+    public UUID getValue() {
+        return uuid;
+    }
+
+    @Override
+    protected List<Object> getEqualityComponents() {
+        return List.of(uuid);
+    }
 }

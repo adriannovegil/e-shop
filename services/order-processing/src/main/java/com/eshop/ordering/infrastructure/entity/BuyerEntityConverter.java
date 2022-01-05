@@ -12,66 +12,67 @@ import java.util.stream.Collectors;
 
 @Component
 class BuyerEntityConverter implements EntityConverter<BuyerEntity, Buyer> {
-  @Override
-  public BuyerEntity toEntity(Buyer buyer) {
-    var snapshot = buyer.snapshot();
-    var buyerEntity = BuyerEntity.builder()
-        .id(UUID.fromString(snapshot.getId()))
-        .userId(snapshot.getUserId())
-        .name(snapshot.getBuyerName())
-        .build();
 
-    buyerEntity.setPaymentMethods(toPaymentMethodEntities(snapshot.getPaymentMethods(), buyerEntity));
+    @Override
+    public BuyerEntity toEntity(Buyer buyer) {
+        var snapshot = buyer.snapshot();
+        var buyerEntity = BuyerEntity.builder()
+                .id(UUID.fromString(snapshot.getId()))
+                .userId(snapshot.getUserId())
+                .name(snapshot.getBuyerName())
+                .build();
 
-    return buyerEntity;
-  }
+        buyerEntity.setPaymentMethods(toPaymentMethodEntities(snapshot.getPaymentMethods(), buyerEntity));
 
-  private Set<PaymentMethodEntity> toPaymentMethodEntities(List<PaymentMethodSnapshot> snapshots, BuyerEntity buyerEntity) {
-    return snapshots.stream()
-        .map(paymentMethod -> toPaymentMethodEntity(paymentMethod, buyerEntity))
-        .collect(Collectors.toSet());
-  }
+        return buyerEntity;
+    }
 
-  private PaymentMethodEntity toPaymentMethodEntity(PaymentMethodSnapshot snapshot, BuyerEntity buyerEntity) {
-    return PaymentMethodEntity
-        .builder()
-        .id(UUID.fromString(snapshot.getId()))
-        .alias(snapshot.getAlias())
-        .cardNumber(snapshot.getCardNumber())
-        .cardHolderName(snapshot.getCardHolderName())
-        .expiration(snapshot.getExpiration())
-        .securityNumber(snapshot.getSecurityNumber())
-        .cardType(snapshot.getCardType())
-        .buyer(buyerEntity)
-        .build();
-  }
+    private Set<PaymentMethodEntity> toPaymentMethodEntities(List<PaymentMethodSnapshot> snapshots, BuyerEntity buyerEntity) {
+        return snapshots.stream()
+                .map(paymentMethod -> toPaymentMethodEntity(paymentMethod, buyerEntity))
+                .collect(Collectors.toSet());
+    }
 
-  @Override
-  public Buyer fromEntity(BuyerEntity entity) {
-    return Buyer.rehydrate(BuyerSnapshot.builder()
-        .id(entity.getId().toString())
-        .userId(entity.getUserId())
-        .buyerName(entity.getName())
-        .paymentMethods(toPaymentMethodSnapshots(entity.getPaymentMethods()))
-        .build());
-  }
+    private PaymentMethodEntity toPaymentMethodEntity(PaymentMethodSnapshot snapshot, BuyerEntity buyerEntity) {
+        return PaymentMethodEntity
+                .builder()
+                .id(UUID.fromString(snapshot.getId()))
+                .alias(snapshot.getAlias())
+                .cardNumber(snapshot.getCardNumber())
+                .cardHolderName(snapshot.getCardHolderName())
+                .expiration(snapshot.getExpiration())
+                .securityNumber(snapshot.getSecurityNumber())
+                .cardType(snapshot.getCardType())
+                .buyer(buyerEntity)
+                .build();
+    }
 
-  private List<PaymentMethodSnapshot> toPaymentMethodSnapshots(Set<PaymentMethodEntity> entities) {
-    return entities.stream()
-        .map(this::toPaymentMethodSnapshot)
-        .collect(Collectors.toList());
-  }
+    @Override
+    public Buyer fromEntity(BuyerEntity entity) {
+        return Buyer.rehydrate(BuyerSnapshot.builder()
+                .id(entity.getId().toString())
+                .userId(entity.getUserId())
+                .buyerName(entity.getName())
+                .paymentMethods(toPaymentMethodSnapshots(entity.getPaymentMethods()))
+                .build());
+    }
 
-  private PaymentMethodSnapshot toPaymentMethodSnapshot(PaymentMethodEntity entity) {
-    return PaymentMethodSnapshot.builder()
-        .id(entity.getId().toString())
-        .alias(entity.getAlias())
-        .cardHolderName(entity.getCardHolderName())
-        .cardNumber(entity.getCardNumber())
-        .cardType(entity.getCardType())
-        .expiration(entity.getExpiration())
-        .securityNumber(entity.getSecurityNumber())
-        .build();
-  }
+    private List<PaymentMethodSnapshot> toPaymentMethodSnapshots(Set<PaymentMethodEntity> entities) {
+        return entities.stream()
+                .map(this::toPaymentMethodSnapshot)
+                .collect(Collectors.toList());
+    }
+
+    private PaymentMethodSnapshot toPaymentMethodSnapshot(PaymentMethodEntity entity) {
+        return PaymentMethodSnapshot.builder()
+                .id(entity.getId().toString())
+                .alias(entity.getAlias())
+                .cardHolderName(entity.getCardHolderName())
+                .cardNumber(entity.getCardNumber())
+                .cardType(entity.getCardType())
+                .expiration(entity.getExpiration())
+                .securityNumber(entity.getSecurityNumber())
+                .build();
+    }
 
 }

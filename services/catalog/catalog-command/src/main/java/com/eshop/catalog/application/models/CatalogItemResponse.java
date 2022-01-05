@@ -8,6 +8,7 @@ import java.util.UUID;
 @Builder
 @Getter
 public class CatalogItemResponse {
-  private final UUID productId;
-  private final Long version;
+
+    private final UUID productId;
+    private final Long version;
 }

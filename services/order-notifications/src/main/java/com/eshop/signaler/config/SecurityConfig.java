@@ -11,17 +11,17 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http
-        .requestMatcher(new AntPathRequestMatcher("/order-notifications"))
-        .cors().disable()
-        .csrf().disable()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .oauth2ResourceServer()
-        .jwt();
-  }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .requestMatcher(new AntPathRequestMatcher("/order-notifications"))
+                .cors().disable()
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .oauth2ResourceServer()
+                .jwt();
+    }
 
 }

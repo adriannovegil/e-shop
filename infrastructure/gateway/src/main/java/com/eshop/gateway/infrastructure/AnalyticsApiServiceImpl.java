@@ -21,33 +21,34 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 @RequiredArgsConstructor
 @Service
 public class AnalyticsApiServiceImpl implements AnalyticsApiService {
-  private final WebClient.Builder analyticsWebClient;
-  private final CatalogApiService catalogApiService;
 
-  @Value("${app.security.oauth2.client.analytics.id}")
-  private String analyticsClientId;
+    private final WebClient.Builder analyticsWebClient;
+    private final CatalogApiService catalogApiService;
 
-  @Override
-  public Flux<CatalogItem> getTopFiveProducts() {
-    return analyticsWebClient.build()
-        .get()
-        .uri("lb://analytics/analytics/products/top-five")
-        .attributes(clientRegistrationId(analyticsClientId))
-        .retrieve()
-        .bodyToFlux(Product.class)
-        .map(Product::id)
-        .collectList()
-        .flatMapMany(catalogApiService::getCatalogItems);
-  }
+    @Value("${app.security.oauth2.client.analytics.id}")
+    private String analyticsClientId;
 
-  @SuppressWarnings("unused")
-  private Flux<CatalogItem> getFirst5ProductsFromCatalog(Exception e) {
-    return catalogApiService.getFirst5CatalogItems();
-  }
+    @Override
+    public Flux<CatalogItem> getTopFiveProducts() {
+        return analyticsWebClient.build()
+                .get()
+                .uri("lb://analytics/analytics/products/top-five")
+                .attributes(clientRegistrationId(analyticsClientId))
+                .retrieve()
+                .bodyToFlux(Product.class)
+                .map(Product::id)
+                .collectList()
+                .flatMapMany(catalogApiService::getCatalogItems);
+    }
 
-  private static record Product(
-      @JsonProperty("id") UUID id
-  ) {
-  }
+    @SuppressWarnings("unused")
+    private Flux<CatalogItem> getFirst5ProductsFromCatalog(Exception e) {
+        return catalogApiService.getFirst5CatalogItems();
+    }
+
+    private static record Product(
+            @JsonProperty("id") UUID id
+    ) {
+    }
 
 }

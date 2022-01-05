@@ -10,10 +10,11 @@ import java.util.UUID;
 
 public record RemoveStockCommand(
     @JsonProperty
-    @NotNull
+        @NotNull
     UUID productId,
     @JsonProperty
-    @NotNull @Min(1)
+        @NotNull
+        @Min(1)
     Integer quantity
 ) implements Command<CatalogItemResponse> {
 }

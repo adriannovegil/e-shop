@@ -12,21 +12,23 @@ import org.springframework.kafka.annotation.KafkaListener;
 @EventHandler
 @RequiredArgsConstructor
 public class GracePeriodConfirmedIntegrationEventHandler {
-  private static final Logger logger = LoggerFactory.getLogger(GracePeriodConfirmedIntegrationEventHandler.class);
 
-  private final Pipeline pipeline;
+    private static final Logger logger = LoggerFactory.getLogger(GracePeriodConfirmedIntegrationEventHandler.class);
 
-  /**
-   * Event handler which confirms that the grace period has been completed and order will not initially be cancelled.
-   * Therefore, the order process continues for validation.
-   */
-  @KafkaListener(
-      groupId = "${app.kafka.group.gracePeriodConfirmed}",
-      topics = "${spring.kafka.consumer.topic.gracePeriodConfirmed}"
-  )
-  public void handle(GracePeriodConfirmedIntegrationEvent event) {
-    logger.info("Handling integration event: {} - ({})", event.getId(), event.getClass().getSimpleName());
+    private final Pipeline pipeline;
 
-    pipeline.send(new SetAwaitingValidationOrderStatusCommand(event.getOrderId()));
-  }
+    /**
+     * Event handler which confirms that the grace period has been completed and
+     * order will not initially be cancelled. Therefore, the order process
+     * continues for validation.
+     */
+    @KafkaListener(
+            groupId = "${app.kafka.group.gracePeriodConfirmed}",
+            topics = "${spring.kafka.consumer.topic.gracePeriodConfirmed}"
+    )
+    public void handle(GracePeriodConfirmedIntegrationEvent event) {
+        logger.info("Handling integration event: {} - ({})", event.getId(), event.getClass().getSimpleName());
+
+        pipeline.send(new SetAwaitingValidationOrderStatusCommand(event.getOrderId()));
+    }
 }

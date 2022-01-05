@@ -17,28 +17,29 @@ import java.util.UUID;
 @Entity
 @Table(name = "orders")
 class OrderEntity extends DbEntity {
-  @Column(nullable = false)
-  private LocalDateTime orderDate;
 
-  @Embedded
-  private AddressModel address;
+    @Column(nullable = false)
+    private LocalDateTime orderDate;
 
-  @Column(name = "buyer_id", nullable = false)
-  private UUID buyerId;
+    @Embedded
+    private AddressModel address;
 
-  @Column(name = "order_status", nullable = false)
-  private String orderStatus;
+    @Column(name = "buyer_id", nullable = false)
+    private UUID buyerId;
 
-  @Column(name = "description")
-  private String description;
+    @Column(name = "order_status", nullable = false)
+    private String orderStatus;
 
-  @Column(name = "is_draft")
-  private boolean isDraft;
+    @Column(name = "description")
+    private String description;
 
-  @Column(name = "payment_method_id", nullable = false)
-  private UUID paymentMethodId;
+    @Column(name = "is_draft")
+    private boolean isDraft;
 
-  @Setter
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
-  private Set<OrderItemEntity> orderItems;
+    @Column(name = "payment_method_id", nullable = false)
+    private UUID paymentMethodId;
+
+    @Setter
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
+    private Set<OrderItemEntity> orderItems;
 }

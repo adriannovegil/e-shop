@@ -15,11 +15,12 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 @QueryHandler
 @RequiredArgsConstructor
 public class OrderQueriesImpl implements OrderQueries {
-  private final EntityManager entityManager;
 
-  @Override
-  public Optional<OrderViewModel.Order> getOrder(String id) {
-    var query = entityManager.createNativeQuery("""
+    private final EntityManager entityManager;
+
+    @Override
+    public Optional<OrderViewModel.Order> getOrder(String id) {
+        var query = entityManager.createNativeQuery("""
           SELECT cast(o.id as varchar) as orderNumber, o.order_date as date, o.description, o.city, o.country, o.state, o.street,
             o.zip_code as zipCode, o.order_status as status,
             oi.product_name as productName, oi.units, oi.unit_price as unitPrice, oi.picture_url as pictureUrl
@@ -28,14 +29,14 @@ public class OrderQueriesImpl implements OrderQueries {
           WHERE o.id = ?1
         """).setParameter(1, UUID.fromString(id));
 
-    return isNotEmpty(query.getResultList())
-        ? Optional.of(toOrder(query.getResultList()))
-        : Optional.empty();
-  }
+        return isNotEmpty(query.getResultList())
+                ? Optional.of(toOrder(query.getResultList()))
+                : Optional.empty();
+    }
 
-  @Override
-  public List<OrderViewModel.OrderSummary> getOrdersFromUser(String userId) {
-    var query = entityManager.createNativeQuery("""
+    @Override
+    public List<OrderViewModel.OrderSummary> getOrdersFromUser(String userId) {
+        var query = entityManager.createNativeQuery("""
         SELECT cast(o.id as varchar) as orderNumber, o.order_date as date, o.order_status as status, sum(oi.units * oi.unit_price) as total
         FROM orders o
         LEFT JOIN order_item oi ON o.id = oi.order_id
@@ -45,70 +46,70 @@ public class OrderQueriesImpl implements OrderQueries {
         ORDER BY o.id
         """).setParameter("userId", userId);
 
-    return toOrderSummaries(query.getResultList());
-  }
+        return toOrderSummaries(query.getResultList());
+    }
 
-  private List<OrderViewModel.OrderSummary> toOrderSummaries(List<Object[]> result) {
-    return result.stream()
-        .map(r -> {
-          var id = (String) r[0];
-          var date = (Timestamp) r[1];
-          var status = (String) r[2];
-          var total = (Double) r[3];
+    private List<OrderViewModel.OrderSummary> toOrderSummaries(List<Object[]> result) {
+        return result.stream()
+                .map(r -> {
+                    var id = (String) r[0];
+                    var date = (Timestamp) r[1];
+                    var status = (String) r[2];
+                    var total = (Double) r[3];
 
-          return new OrderViewModel.OrderSummary(
-              id,
-              date.toLocalDateTime(),
-              status,
-              total
-          );
+                    return new OrderViewModel.OrderSummary(
+                            id,
+                            date.toLocalDateTime(),
+                            status,
+                            total
+                    );
+                }).collect(Collectors.toList());
+    }
+
+    private OrderViewModel.Order toOrder(List<Object[]> result) {
+        var orderItems = result.stream().map(r -> {
+            var productName = (String) r[9];
+            var units = (Integer) r[10];
+            var unitPrice = (Double) r[11];
+            var pictureUrl = (String) r[12];
+
+            return new OrderViewModel.OrderItem(
+                    productName,
+                    units,
+                    unitPrice,
+                    pictureUrl
+            );
         }).collect(Collectors.toList());
-  }
 
-  private OrderViewModel.Order toOrder(List<Object[]> result) {
-    var orderItems = result.stream().map(r -> {
-      var productName = (String) r[9];
-      var units = (Integer) r[10];
-      var unitPrice = (Double) r[11];
-      var pictureUrl = (String) r[12];
+        var orderDetails = result.get(0);
 
-      return new OrderViewModel.OrderItem(
-          productName,
-          units,
-          unitPrice,
-          pictureUrl
-      );
-    }).collect(Collectors.toList());
+        var orderId = (String) orderDetails[0];
+        var date = (Timestamp) orderDetails[1];
+        var description = (String) orderDetails[2];
+        var city = (String) orderDetails[3];
+        var country = (String) orderDetails[4];
+        var state = (String) orderDetails[5];
+        var street = (String) orderDetails[6];
+        var zipCode = (String) orderDetails[7];
+        var status = (String) orderDetails[8];
 
-    var orderDetails = result.get(0);
+        var total = orderItems.stream()
+                .map(item -> item.units() * item.unitPrice())
+                .reduce(Double::sum)
+                .orElse(0D);
 
-    var orderId = (String) orderDetails[0];
-    var date = (Timestamp) orderDetails[1];
-    var description = (String) orderDetails[2];
-    var city = (String) orderDetails[3];
-    var country = (String) orderDetails[4];
-    var state = (String) orderDetails[5];
-    var street = (String) orderDetails[6];
-    var zipCode = (String) orderDetails[7];
-    var status = (String) orderDetails[8];
-
-    var total = orderItems.stream()
-        .map(item -> item.units() * item.unitPrice())
-        .reduce(Double::sum)
-        .orElse(0D);
-
-    return new OrderViewModel.Order(
-        orderId,
-        date.toLocalDateTime(),
-        status,
-        description,
-        street,
-        city,
-        state,
-        zipCode,
-        country,
-        orderItems,
-        total
-    );
-  }
+        return new OrderViewModel.Order(
+                orderId,
+                date.toLocalDateTime(),
+                status,
+                description,
+                street,
+                city,
+                state,
+                zipCode,
+                country,
+                orderItems,
+                total
+        );
+    }
 }

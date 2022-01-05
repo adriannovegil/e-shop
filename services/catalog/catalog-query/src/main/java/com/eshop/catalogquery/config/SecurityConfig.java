@@ -9,14 +9,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-  @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .mvcMatcher("/catalog/**")
-        .authorizeRequests()
-        .mvcMatchers(HttpMethod.GET, "/catalog/*").permitAll();
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .mvcMatcher("/catalog/**")
+                .authorizeRequests()
+                .mvcMatchers(HttpMethod.GET, "/catalog/*").permitAll();
 
-    return http.build();
-  }
+        return http.build();
+    }
 
 }

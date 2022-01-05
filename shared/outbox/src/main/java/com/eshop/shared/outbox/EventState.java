@@ -1,8 +1,8 @@
 package com.eshop.shared.outbox;
 
 public enum EventState {
-  NotPublished,
-  InProgress,
-  Published,
-  PublishedFailed
+    NotPublished,
+    InProgress,
+    Published,
+    PublishedFailed
 }

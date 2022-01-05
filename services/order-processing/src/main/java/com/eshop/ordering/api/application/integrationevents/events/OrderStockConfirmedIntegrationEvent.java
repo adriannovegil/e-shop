@@ -10,5 +10,6 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class OrderStockConfirmedIntegrationEvent extends IntegrationEvent {
-  private String orderId;
+
+    private String orderId;
 }

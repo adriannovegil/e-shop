@@ -23,27 +23,27 @@ import java.util.UUID;
 @Getter
 public class DbEntity {
 
-  @Id
-  @Column(name = "id", nullable = false)
-  private UUID id;
+    @Id
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (this.id == null || obj == null || !(this.getClass().equals(obj.getClass()))) {
+            return false;
+        }
+
+        DbEntity that = (DbEntity) obj;
+
+        return this.id.equals(that.getId());
     }
 
-    if (this.id == null || obj == null || !(this.getClass().equals(obj.getClass()))) {
-      return false;
+    @Override
+    public int hashCode() {
+        return id == null ? 0 : id.hashCode();
     }
-
-    DbEntity that = (DbEntity) obj;
-
-    return this.id.equals(that.getId());
-  }
-
-  @Override
-  public int hashCode() {
-    return id == null ? 0 : id.hashCode();
-  }
 }

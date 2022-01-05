@@ -13,22 +13,23 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class OrderStatusChangedToStockConfirmedIntegrationEventHandler {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToStockConfirmedIntegrationEventHandler.class);
 
-  private final EventBus paymentStatusEventBus;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToStockConfirmedIntegrationEventHandler.class);
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.stockConfirmed}",
-      topics = "${spring.kafka.consumer.topic.stockConfirmed}"
-  )
-  public void handle(OrderStatusChangedToStockConfirmedIntegrationEvent event) {
-    logger.info("Handling integration event: {} - ({})", event.getId(), event.getClass().getSimpleName());
+    private final EventBus paymentStatusEventBus;
 
-    final var n = Math.random();
-    if (n < 0.7) {
-      paymentStatusEventBus.publish(new OrderPaymentSucceededIntegrationEvent(event.getOrderId()));
-    } else {
-      paymentStatusEventBus.publish(new OrderPaymentFailedIntegrationEvent(event.getOrderId()));
+    @KafkaListener(
+            groupId = "${app.kafka.group.stockConfirmed}",
+            topics = "${spring.kafka.consumer.topic.stockConfirmed}"
+    )
+    public void handle(OrderStatusChangedToStockConfirmedIntegrationEvent event) {
+        logger.info("Handling integration event: {} - ({})", event.getId(), event.getClass().getSimpleName());
+
+        final var n = Math.random();
+        if (n < 0.7) {
+            paymentStatusEventBus.publish(new OrderPaymentSucceededIntegrationEvent(event.getOrderId()));
+        } else {
+            paymentStatusEventBus.publish(new OrderPaymentFailedIntegrationEvent(event.getOrderId()));
+        }
     }
-  }
 }

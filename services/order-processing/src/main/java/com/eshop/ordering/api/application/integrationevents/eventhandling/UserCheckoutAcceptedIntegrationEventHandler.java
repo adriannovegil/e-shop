@@ -13,54 +13,55 @@ import org.springframework.kafka.annotation.KafkaListener;
 @EventHandler
 @RequiredArgsConstructor
 public class UserCheckoutAcceptedIntegrationEventHandler {
-  private static final Logger logger = LoggerFactory.getLogger(UserCheckoutAcceptedIntegrationEventHandler.class);
 
-  private final CommandBus commandBus;
+    private static final Logger logger = LoggerFactory.getLogger(UserCheckoutAcceptedIntegrationEventHandler.class);
 
-  /**
-   * Integration event handler which starts the create order process.
-   *
-   * @param event Integration event message which is sent by the  basket.api once it has successfully process the
-   *              order items.
-   */
-  @KafkaListener(
-      groupId = "${app.kafka.group.orderCheckouts}",
-      topics = "${spring.kafka.consumer.topic.orderCheckouts}"
-  )
-  public void handle(UserCheckoutAcceptedIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+    private final CommandBus commandBus;
 
-    if (event.getRequestId() != null) {
-      createOrder(event);
-    } else {
-      logger.info("Invalid IntegrationEvent - RequestId is missing - {}", event.getClass().getSimpleName());
+    /**
+     * Integration event handler which starts the create order process.
+     *
+     * @param event Integration event message which is sent by the basket.api
+     * once it has successfully process the order items.
+     */
+    @KafkaListener(
+            groupId = "${app.kafka.group.orderCheckouts}",
+            topics = "${spring.kafka.consumer.topic.orderCheckouts}"
+    )
+    public void handle(UserCheckoutAcceptedIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+
+        if (event.getRequestId() != null) {
+            createOrder(event);
+        } else {
+            logger.info("Invalid IntegrationEvent - RequestId is missing - {}", event.getClass().getSimpleName());
+        }
     }
-  }
 
-  private void createOrder(UserCheckoutAcceptedIntegrationEvent event) {
-    var createOrderCommand = CreateOrderCommand.builder()
-        .basketItems(event.getBasket().getItems())
-        .userId(event.getUserId())
-        .userName(event.getUserName())
-        .city(event.getCity())
-        .street(event.getStreet())
-        .state(event.getState())
-        .country(event.getCountry())
-        .zipCode(event.getZipCode())
-        .cardNumber(event.getCardNumber())
-        .cardHolderName(event.getCardHolderName())
-        .cardExpiration(event.getCardExpiration())
-        .cardSecurityNumber(event.getCardSecurityNumber())
-        .cardType(event.getCardType())
-        .build();
-    var requestCreateOrder = new CreateOrderIdentifiedCommand(createOrderCommand, event.getRequestId());
-    var result = commandBus.send(requestCreateOrder);
+    private void createOrder(UserCheckoutAcceptedIntegrationEvent event) {
+        var createOrderCommand = CreateOrderCommand.builder()
+                .basketItems(event.getBasket().getItems())
+                .userId(event.getUserId())
+                .userName(event.getUserName())
+                .city(event.getCity())
+                .street(event.getStreet())
+                .state(event.getState())
+                .country(event.getCountry())
+                .zipCode(event.getZipCode())
+                .cardNumber(event.getCardNumber())
+                .cardHolderName(event.getCardHolderName())
+                .cardExpiration(event.getCardExpiration())
+                .cardSecurityNumber(event.getCardSecurityNumber())
+                .cardType(event.getCardType())
+                .build();
+        var requestCreateOrder = new CreateOrderIdentifiedCommand(createOrderCommand, event.getRequestId());
+        var result = commandBus.send(requestCreateOrder);
 
-    if (result) {
-      logger.info("CreateOrderCommand succeeded - RequestId: {}", event.getRequestId());
-    } else {
-      logger.info("CreateOrderCommand failed - RequestId: {}", event.getRequestId());
+        if (result) {
+            logger.info("CreateOrderCommand succeeded - RequestId: {}", event.getRequestId());
+        } else {
+            logger.info("CreateOrderCommand failed - RequestId: {}", event.getRequestId());
+        }
     }
-  }
 
 }

@@ -13,23 +13,24 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class OrderStatusChangedToShippedIntegrationEventHandler
-    implements IntegrationEventHandler<OrderStatusChangedToShippedIntegrationEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToShippedIntegrationEventHandler.class);
-  private static final String DESTINATION = "/queue/order-shipped";
+        implements IntegrationEventHandler<OrderStatusChangedToShippedIntegrationEvent> {
 
-  private final SimpMessagingTemplate simpMessagingTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToShippedIntegrationEventHandler.class);
+    private static final String DESTINATION = "/queue/order-shipped";
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.shippedOrders}",
-      topics = "${spring.kafka.consumer.topic.shippedOrders}"
-  )
-  @Override
-  public void handle(OrderStatusChangedToShippedIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    simpMessagingTemplate.convertAndSendToUser(
-        event.getBuyerName(),
-        DESTINATION,
-        new OrderStatus(event.getOrderId(), event.getOrderStatus())
-    );
-  }
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    @KafkaListener(
+            groupId = "${app.kafka.group.shippedOrders}",
+            topics = "${spring.kafka.consumer.topic.shippedOrders}"
+    )
+    @Override
+    public void handle(OrderStatusChangedToShippedIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        simpMessagingTemplate.convertAndSendToUser(
+                event.getBuyerName(),
+                DESTINATION,
+                new OrderStatus(event.getOrderId(), event.getOrderStatus())
+        );
+    }
 }

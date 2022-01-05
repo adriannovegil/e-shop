@@ -8,5 +8,6 @@ import java.util.UUID;
 
 @Repository
 interface BuyerEntityRepository extends CrudRepository<BuyerEntity, UUID> {
-  Optional<BuyerEntity> findByUserId(String userId);
+
+    Optional<BuyerEntity> findByUserId(String userId);
 }

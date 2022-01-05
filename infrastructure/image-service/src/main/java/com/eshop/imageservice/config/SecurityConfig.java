@@ -16,39 +16,39 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-  @Value("${app.security.jwt.user-name-attribute}")
-  private String userNameAttribute;
+    @Value("${app.security.jwt.user-name-attribute}")
+    private String userNameAttribute;
 
-  @Value("${app.auth-server.issuer-uri}")
-  private String issuer;
+    @Value("${app.auth-server.issuer-uri}")
+    private String issuer;
 
-  @Value("${app.security.audience.image}")
-  private String imageAudience;
+    @Value("${app.security.audience.image}")
+    private String imageAudience;
 
-  @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .cors()
-        .and()
-        .csrf().disable()
-        .mvcMatcher("/**")
-        .authorizeRequests()
-        .anyRequest().hasRole(EshopRole.Admin)
-        .and()
-        .oauth2ResourceServer()
-        .jwt()
-        .decoder(jwtDecoder())
-        .jwtAuthenticationConverter(jwtAuthenticationConverter());
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .cors()
+                .and()
+                .csrf().disable()
+                .mvcMatcher("/**")
+                .authorizeRequests()
+                .anyRequest().hasRole(EshopRole.Admin)
+                .and()
+                .oauth2ResourceServer()
+                .jwt()
+                .decoder(jwtDecoder())
+                .jwtAuthenticationConverter(jwtAuthenticationConverter());
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  private JwtDecoder jwtDecoder() {
-    return new EshopJwtDecoder(issuer, imageAudience);
-  }
+    private JwtDecoder jwtDecoder() {
+        return new EshopJwtDecoder(issuer, imageAudience);
+    }
 
-  private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
-    return new EshopJwtAuthenticationConverter(userNameAttribute);
-  }
+    private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
+        return new EshopJwtAuthenticationConverter(userNameAttribute);
+    }
 
 }

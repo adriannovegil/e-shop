@@ -11,6 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 public class CategoryDto {
-  private UUID id;
-  private String name;
+
+    private UUID id;
+    private String name;
 }

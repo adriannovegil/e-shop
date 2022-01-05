@@ -10,8 +10,9 @@ import java.util.UUID;
 
 public record AddStockCommand(
     @JsonProperty
-    @NotNull UUID productId,
+        @NotNull UUID productId,
     @JsonProperty
-    @NotNull @Min(1) Integer quantity
+        @NotNull
+        @Min(1) Integer quantity
 ) implements Command<CatalogItemResponse> {
 }

@@ -10,7 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class Order {
-  private String id;
-  private Double totalPrice;
-  private List<OrderItem> orderItems;
+
+    private String id;
+    private Double totalPrice;
+    private List<OrderItem> orderItems;
 }

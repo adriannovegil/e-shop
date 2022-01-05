@@ -22,45 +22,45 @@ import java.util.UUID;
 @Validated
 public class OrdersController {
 
-  private final CommandBus commandBus;
-  private final OrderQueries orderQueries;
-  private final IdentityService identityService;
+    private final CommandBus commandBus;
+    private final OrderQueries orderQueries;
+    private final IdentityService identityService;
 
-  @RequestMapping(value = "cancel", method = RequestMethod.PUT)
-  @ResponseStatus(HttpStatus.OK)
-  public void cancelOrder(
-      @RequestBody @Valid CancelOrderCommand command,
-      @RequestHeader("x-requestid") String requestId
-  ) {
-    var requestCancelOrder = new CancelOrderIdentifiedCommand(command, UUID.fromString(requestId));
-    commandBus.send(requestCancelOrder);
-  }
+    @RequestMapping(value = "cancel", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public void cancelOrder(
+            @RequestBody @Valid CancelOrderCommand command,
+            @RequestHeader("x-requestid") String requestId
+    ) {
+        var requestCancelOrder = new CancelOrderIdentifiedCommand(command, UUID.fromString(requestId));
+        commandBus.send(requestCancelOrder);
+    }
 
-  @RequestMapping(value = "ship", method = RequestMethod.PUT)
-  @ResponseStatus(HttpStatus.OK)
-  public void shipOrder(
-      @RequestBody @Valid ShipOrderCommand command,
-      @RequestHeader("x-requestid") String requestId
-  ) {
-    var shipOrderCommand = new ShipOrderIdentifiedCommand(command, UUID.fromString(requestId));
-    commandBus.send(shipOrderCommand);
-  }
+    @RequestMapping(value = "ship", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public void shipOrder(
+            @RequestBody @Valid ShipOrderCommand command,
+            @RequestHeader("x-requestid") String requestId
+    ) {
+        var shipOrderCommand = new ShipOrderIdentifiedCommand(command, UUID.fromString(requestId));
+        commandBus.send(shipOrderCommand);
+    }
 
-  @RequestMapping("{orderId}")
-  public ResponseEntity<OrderViewModel.Order> getOrder(@PathVariable String orderId) {
-    return ResponseEntity.of(orderQueries.getOrder(orderId));
-  }
+    @RequestMapping("{orderId}")
+    public ResponseEntity<OrderViewModel.Order> getOrder(@PathVariable String orderId) {
+        return ResponseEntity.of(orderQueries.getOrder(orderId));
+    }
 
-  @RequestMapping()
-  public ResponseEntity<List<OrderViewModel.OrderSummary>> getOrders() {
-    return ResponseEntity.ok(orderQueries.getOrdersFromUser(identityService.getUserIdentity()));
-  }
+    @RequestMapping()
+    public ResponseEntity<List<OrderViewModel.OrderSummary>> getOrders() {
+        return ResponseEntity.ok(orderQueries.getOrdersFromUser(identityService.getUserIdentity()));
+    }
 
-  @RequestMapping(value = "draft", method = RequestMethod.POST)
-  public ResponseEntity<OrderDraftDTO> createOrderDraftFromBasketData(
-      @RequestBody @Valid CreateOrderDraftCommand command
-  ) {
-    return ResponseEntity.ok(commandBus.send(command));
-  }
+    @RequestMapping(value = "draft", method = RequestMethod.POST)
+    public ResponseEntity<OrderDraftDTO> createOrderDraftFromBasketData(
+            @RequestBody @Valid CreateOrderDraftCommand command
+    ) {
+        return ResponseEntity.ok(commandBus.send(command));
+    }
 
 }

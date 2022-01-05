@@ -11,11 +11,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 @LoadBalancerClient(value = "order", configuration = RoundRobinLoadBalancerConfig.class)
 public class OrderWebClientConfig {
 
-  @LoadBalanced
-  @Bean
-  public WebClient.Builder orderWebClient() {
-    return WebClient.builder()
-        .filter(new ServerBearerExchangeFilterFunction());
-  }
+    @LoadBalanced
+    @Bean
+    public WebClient.Builder orderWebClient() {
+        return WebClient.builder()
+                .filter(new ServerBearerExchangeFilterFunction());
+    }
 
 }

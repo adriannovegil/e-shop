@@ -10,12 +10,12 @@ public record AvailableStockMustNotBeEmpty(
 ) implements BusinessRule {
 
   @Override
-  public boolean broken() {
+        public boolean broken() {
     return availableStock.isEmpty();
   }
 
   @Override
-  public String message() {
+        public String message() {
     return "Empty stock, product item %s is sold out".formatted(name.getName());
   }
 }

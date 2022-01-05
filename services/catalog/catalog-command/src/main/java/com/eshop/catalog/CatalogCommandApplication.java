@@ -9,7 +9,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @EnableEurekaClient
 @EntityScan
 public class CatalogCommandApplication {
-  public static void main(String[] args) {
-    SpringApplication.run(CatalogCommandApplication.class, args);
-  }
+
+    public static void main(String[] args) {
+        SpringApplication.run(CatalogCommandApplication.class, args);
+    }
 }

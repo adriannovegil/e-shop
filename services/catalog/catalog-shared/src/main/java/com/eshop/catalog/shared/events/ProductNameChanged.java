@@ -6,10 +6,11 @@ import java.util.UUID;
 
 @Getter
 public class ProductNameChanged extends Event {
-  private final String name;
 
-  public ProductNameChanged(UUID id, String name) {
-    super(id);
-    this.name = name;
-  }
+    private final String name;
+
+    public ProductNameChanged(UUID id, String name) {
+        super(id);
+        this.name = name;
+    }
 }

@@ -13,22 +13,23 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Getter
 @ToString
 public class SecurityNumber extends ValueObject {
-  private final String value;
 
-  private SecurityNumber(@NonNull String value) {
-    if (isEmpty(value)) {
-      throw new OrderingDomainException("Security number cannot be empty");
+    private final String value;
+
+    private SecurityNumber(@NonNull String value) {
+        if (isEmpty(value)) {
+            throw new OrderingDomainException("Security number cannot be empty");
+        }
+
+        this.value = value;
     }
 
-    this.value = value;
-  }
+    public static SecurityNumber of(@NonNull String value) {
+        return new SecurityNumber(value);
+    }
 
-  public static SecurityNumber of(@NonNull String value) {
-    return new SecurityNumber(value);
-  }
-
-  @Override
-  protected List<Object> getEqualityComponents() {
-    return List.of(value);
-  }
+    @Override
+    protected List<Object> getEqualityComponents() {
+        return List.of(value);
+    }
 }

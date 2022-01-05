@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class OrderGracePeriodTaskApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(OrderGracePeriodTaskApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(OrderGracePeriodTaskApplication.class, args);
+    }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Data
 @RefreshScope
 public class TestConfig {
-  private String name;
-  private String phone;
+
+    private String name;
+    private String phone;
 }

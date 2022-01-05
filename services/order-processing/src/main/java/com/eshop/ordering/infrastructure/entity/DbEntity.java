@@ -15,7 +15,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @MappedSuperclass
 abstract class DbEntity {
-  @Id
-  @Getter
-  protected UUID id;
+
+    @Id
+    @Getter
+    protected UUID id;
 }

@@ -5,5 +5,6 @@ import com.eshop.analytics.model.Product;
 import java.util.List;
 
 public interface BestSellingProductsService {
-  List<Product> topFiveProducts();
+
+    List<Product> topFiveProducts();
 }

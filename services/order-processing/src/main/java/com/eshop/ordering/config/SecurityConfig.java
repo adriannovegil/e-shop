@@ -18,43 +18,44 @@ import static com.eshop.security.GrantedAuthoritiesUtils.scope;
 
 @Configuration
 public class SecurityConfig {
-  private static final String ORDERS_SCOPE = "orders";
 
-  @Value("${app.security.jwt.user-name-attribute}")
-  private String userNameAttribute;
+    private static final String ORDERS_SCOPE = "orders";
 
-  @Value("${app.auth-server.issuer-uri}")
-  private String issuer;
+    @Value("${app.security.jwt.user-name-attribute}")
+    private String userNameAttribute;
 
-  @Value("${app.security.audience.order}")
-  private String orderAudience;
+    @Value("${app.auth-server.issuer-uri}")
+    private String issuer;
 
-  @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .mvcMatcher("/orders/**")
-        .authorizeRequests()
-        .mvcMatchers("/orders/ship").hasRole(EshopRole.Admin)
-        .mvcMatchers("/orders/cancel").hasRole(EshopRole.Admin)
-        .mvcMatchers(HttpMethod.GET, "/orders/*").hasAuthority(scope(ORDERS_SCOPE))
-        .mvcMatchers(HttpMethod.POST, "/orders/*").hasAuthority(scope(ORDERS_SCOPE))
-        .mvcMatchers(HttpMethod.PUT, "/orders/*").hasAuthority(scope(ORDERS_SCOPE))
-        .mvcMatchers(HttpMethod.DELETE, "/orders/*").hasAuthority(scope(ORDERS_SCOPE))
-        .and()
-        .oauth2ResourceServer()
-        .jwt()
-        .decoder(jwtDecoder())
-        .jwtAuthenticationConverter(jwtAuthenticationConverter());
+    @Value("${app.security.audience.order}")
+    private String orderAudience;
 
-    return http.build();
-  }
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .mvcMatcher("/orders/**")
+                .authorizeRequests()
+                .mvcMatchers("/orders/ship").hasRole(EshopRole.Admin)
+                .mvcMatchers("/orders/cancel").hasRole(EshopRole.Admin)
+                .mvcMatchers(HttpMethod.GET, "/orders/*").hasAuthority(scope(ORDERS_SCOPE))
+                .mvcMatchers(HttpMethod.POST, "/orders/*").hasAuthority(scope(ORDERS_SCOPE))
+                .mvcMatchers(HttpMethod.PUT, "/orders/*").hasAuthority(scope(ORDERS_SCOPE))
+                .mvcMatchers(HttpMethod.DELETE, "/orders/*").hasAuthority(scope(ORDERS_SCOPE))
+                .and()
+                .oauth2ResourceServer()
+                .jwt()
+                .decoder(jwtDecoder())
+                .jwtAuthenticationConverter(jwtAuthenticationConverter());
 
-  private JwtDecoder jwtDecoder() {
-    return new EshopJwtDecoder(issuer, orderAudience);
-  }
+        return http.build();
+    }
 
-  private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
-    return new EshopJwtAuthenticationConverter(userNameAttribute);
-  }
+    private JwtDecoder jwtDecoder() {
+        return new EshopJwtDecoder(issuer, orderAudience);
+    }
+
+    private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
+        return new EshopJwtAuthenticationConverter(userNameAttribute);
+    }
 
 }

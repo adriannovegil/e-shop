@@ -10,7 +10,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BasketItem {
-  private UUID productId;
-  private String productName;
-  private Integer quantity;
+
+    private UUID productId;
+    private String productName;
+    private Integer quantity;
 }

@@ -12,11 +12,11 @@ import java.util.List;
 
 public record CreateOrderDraftCommand(
     @NotEmpty(message = "Buyer id is required")
-    @JsonProperty("buyerId")
+        @JsonProperty("buyerId")
     String buyerId,
     @JsonProperty("items")
-    @Valid
-    @NotEmpty(message = "The basket must contain at least one product")
+        @Valid
+        @NotEmpty(message = "The basket must contain at least one product")
     List<BasketItem> items
 ) implements Command<OrderDraftDTO> {
 }

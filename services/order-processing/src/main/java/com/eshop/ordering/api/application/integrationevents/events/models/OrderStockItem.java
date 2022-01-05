@@ -10,6 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 public class OrderStockItem {
-  private UUID productId;
-  private Integer units;
+
+    private UUID productId;
+    private Integer units;
 }

@@ -9,11 +9,12 @@ import java.time.LocalDate;
 @Builder
 @Getter
 public class PaymentMethodSnapshot implements Snapshot {
-  private final String id;
-  private final String alias;
-  private final String cardNumber;
-  private final String securityNumber;
-  private final String cardHolderName;
-  private final LocalDate expiration;
-  private final String cardType;
+
+    private final String id;
+    private final String alias;
+    private final String cardNumber;
+    private final String securityNumber;
+    private final String cardHolderName;
+    private final LocalDate expiration;
+    private final String cardType;
 }

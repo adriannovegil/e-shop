@@ -11,7 +11,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 @EntityScan
 public class CatalogQueryApplication {
-  public static void main(String[] args) {
-    SpringApplication.run(CatalogQueryApplication.class, args);
-  }
+
+    public static void main(String[] args) {
+        SpringApplication.run(CatalogQueryApplication.class, args);
+    }
 }

@@ -23,27 +23,27 @@ import static java.util.stream.Collectors.toMap;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ValidationExceptionHandler extends ResponseEntityExceptionHandler {
 
-  @ExceptionHandler(ConstraintViolationException.class)
-  protected ResponseEntity<Map<Path, String>> handleConstraintViolationException(
-      ConstraintViolationException ex, WebRequest request) {
-    var errors = ex.getConstraintViolations()
-        .stream()
-        .collect(toMap(ConstraintViolation::getPropertyPath, ConstraintViolation::getMessage));
-    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-  }
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<Map<Path, String>> handleConstraintViolationException(
+            ConstraintViolationException ex, WebRequest request) {
+        var errors = ex.getConstraintViolations()
+                .stream()
+                .collect(toMap(ConstraintViolation::getPropertyPath, ConstraintViolation::getMessage));
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 
-  @Override
-  protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      MethodArgumentNotValidException ex,
-      HttpHeaders headers,
-      HttpStatus status,
-      WebRequest request
-  ) {
-    var errors = ex
-        .getBindingResult()
-        .getFieldErrors()
-        .stream()
-        .collect(toMap(FieldError::getField, FieldError::getDefaultMessage));
-    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-  }
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request
+    ) {
+        var errors = ex
+                .getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .collect(toMap(FieldError::getField, FieldError::getDefaultMessage));
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 }

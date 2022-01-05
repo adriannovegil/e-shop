@@ -14,22 +14,23 @@ import org.springframework.kafka.annotation.KafkaListener;
 @EventHandler
 @RequiredArgsConstructor
 public class PaymentStatusChangedIntegrationEventHandler {
-  private static final Logger logger = LoggerFactory.getLogger(PaymentStatusChangedIntegrationEventHandler.class);
 
-  private final Pipeline pipeline;
+    private static final Logger logger = LoggerFactory.getLogger(PaymentStatusChangedIntegrationEventHandler.class);
 
-  @KafkaListener(
-      groupId = "${app.kafka.group.paymentStatus}",
-      topics = "${spring.kafka.consumer.topic.paymentStatus}"
-  )
-  public void handle(OrderPaymentStatusChangedIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+    private final Pipeline pipeline;
 
-    if (PaymentStatus.SUCCESS.equals(event.getStatus())) {
-      pipeline.send(new SetPaidOrderStatusCommand(event.getOrderId()));
-    } else {
-      logger.info("The payment of order {} failed. Cancelling the order.", event.getId());
-      pipeline.send(new CancelOrderCommand(event.getOrderId()));
+    @KafkaListener(
+            groupId = "${app.kafka.group.paymentStatus}",
+            topics = "${spring.kafka.consumer.topic.paymentStatus}"
+    )
+    public void handle(OrderPaymentStatusChangedIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+
+        if (PaymentStatus.SUCCESS.equals(event.getStatus())) {
+            pipeline.send(new SetPaidOrderStatusCommand(event.getOrderId()));
+        } else {
+            logger.info("The payment of order {} failed. Cancelling the order.", event.getId());
+            pipeline.send(new CancelOrderCommand(event.getOrderId()));
+        }
     }
-  }
 }

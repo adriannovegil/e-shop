@@ -12,10 +12,11 @@ import java.util.UUID;
 @Builder
 @Document(collection = "brand")
 public class BrandEntity {
-  @Id
-  private String id;
 
-  private UUID brandId;
+    @Id
+    private String id;
 
-  private String name;
+    private UUID brandId;
+
+    private String name;
 }

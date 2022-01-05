@@ -14,19 +14,20 @@ import org.springframework.transaction.annotation.Transactional;
 @ProcessingGroup("kafka-group")
 @Component
 public class ProductPriceChangedProjection {
-  private static final Logger logger = LoggerFactory.getLogger(ProductPriceChangedProjection.class);
 
-  private final CatalogItemRepository catalogItemRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProductPriceChangedProjection.class);
 
-  @EventHandler
-  @Transactional
-  public void project(ProductPriceChanged event) {
-    logger.info("Handling event: {} ({})", event.getId(), event.getClass().getSimpleName());
+    private final CatalogItemRepository catalogItemRepository;
 
-    final var catalogItem = catalogItemRepository.findById(event.getId())
-        .orElseThrow(() -> new RuntimeException("Catalog item not found"));
+    @EventHandler
+    @Transactional
+    public void project(ProductPriceChanged event) {
+        logger.info("Handling event: {} ({})", event.getId(), event.getClass().getSimpleName());
 
-    catalogItem.setPrice(event.getPrice());
-    catalogItemRepository.save(catalogItem);
-  }
+        final var catalogItem = catalogItemRepository.findById(event.getId())
+                .orElseThrow(() -> new RuntimeException("Catalog item not found"));
+
+        catalogItem.setPrice(event.getPrice());
+        catalogItemRepository.save(catalogItem);
+    }
 }

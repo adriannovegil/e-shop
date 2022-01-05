@@ -16,38 +16,39 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 @Service
 public class BasketApiServiceImpl implements BasketApiService {
-  private final WebClient.Builder basketWebClient;
 
-  @CircuitBreaker(name = "basket", fallbackMethod = "circuitBreakerEmptyBasketData")
-  @Retry(name = "basket", fallbackMethod = "retryEmptyBasketData")
-  @Override
-  public Mono<BasketData> getById(String id) {
-    return basketWebClient.build()
-        .get()
-        .uri("lb://basket/basket/" + id)
-        .retrieve()
-        .bodyToMono(BasketData.class);
-  }
+    private final WebClient.Builder basketWebClient;
 
-  @CircuitBreaker(name = "basket")
-  @Retry(name = "basket")
-  @Override
-  public Mono<BasketData> update(BasketData currentBasket) {
-    return basketWebClient.build()
-        .post()
-        .uri("lb://basket/basket/")
-        .contentType(MediaType.APPLICATION_JSON)
-        .bodyValue(currentBasket)
-        .retrieve()
-        .bodyToMono(BasketData.class);
-  }
+    @CircuitBreaker(name = "basket", fallbackMethod = "circuitBreakerEmptyBasketData")
+    @Retry(name = "basket", fallbackMethod = "retryEmptyBasketData")
+    @Override
+    public Mono<BasketData> getById(String id) {
+        return basketWebClient.build()
+                .get()
+                .uri("lb://basket/basket/" + id)
+                .retrieve()
+                .bodyToMono(BasketData.class);
+    }
 
-  private Mono<BasketData> circuitBreakerEmptyBasketData(String id, CallNotPermittedException t) {
-    return Mono.just(new BasketData(id, new ArrayList<>()));
-  }
+    @CircuitBreaker(name = "basket")
+    @Retry(name = "basket")
+    @Override
+    public Mono<BasketData> update(BasketData currentBasket) {
+        return basketWebClient.build()
+                .post()
+                .uri("lb://basket/basket/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(currentBasket)
+                .retrieve()
+                .bodyToMono(BasketData.class);
+    }
 
-  private Mono<BasketData> retryEmptyBasketData(String id, Exception t) {
-    return Mono.just(new BasketData(id, new ArrayList<>()));
-  }
+    private Mono<BasketData> circuitBreakerEmptyBasketData(String id, CallNotPermittedException t) {
+        return Mono.just(new BasketData(id, new ArrayList<>()));
+    }
+
+    private Mono<BasketData> retryEmptyBasketData(String id, Exception t) {
+        return Mono.just(new BasketData(id, new ArrayList<>()));
+    }
 
 }

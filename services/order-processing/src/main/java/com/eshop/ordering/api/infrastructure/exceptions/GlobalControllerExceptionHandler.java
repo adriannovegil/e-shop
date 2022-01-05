@@ -13,17 +13,18 @@ import org.springframework.web.context.request.WebRequest;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
- * The class Global controller exception handler is a generic and central point for all exceptions.
+ * The class Global controller exception handler is a generic and central point
+ * for all exceptions.
  */
 @RestControllerAdvice
 @Log4j2
 class GlobalControllerExceptionHandler extends ControllerExceptionHandler {
 
-  @ResponseStatus(BAD_REQUEST)
-  @ExceptionHandler(OrderingDomainException.class)
-  public @ResponseBody
-  HttpErrorInfo handleCatalogDomainExceptions(OrderingDomainException ex, WebRequest request) {
-    return createHttpErrorInfo(BAD_REQUEST, ex, request);
-  }
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(OrderingDomainException.class)
+    public @ResponseBody
+    HttpErrorInfo handleCatalogDomainExceptions(OrderingDomainException ex, WebRequest request) {
+        return createHttpErrorInfo(BAD_REQUEST, ex, request);
+    }
 
 }

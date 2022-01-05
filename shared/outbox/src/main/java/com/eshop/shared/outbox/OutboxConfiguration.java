@@ -14,25 +14,25 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EntityScan
 public class OutboxConfiguration {
 
-  @Bean
-  public IntegrationEventLogService integrationEventLogService(
-      IntegrationEventLogRepository integrationEventLogRepository
-  ) {
-    return new IntegrationEventLogServiceImpl(eventLogObjectMapper(), integrationEventLogRepository);
-  }
+    @Bean
+    public IntegrationEventLogService integrationEventLogService(
+            IntegrationEventLogRepository integrationEventLogRepository
+    ) {
+        return new IntegrationEventLogServiceImpl(eventLogObjectMapper(), integrationEventLogRepository);
+    }
 
-  @Bean
-  IntegrationEventProcessor integrationEventProcessor(
-      IntegrationEventLogService integrationEventLogService,
-      IntegrationEventPublisher integrationEventPublisher
-  ) {
-    return new IntegrationEventProcessor(integrationEventLogService, integrationEventPublisher);
-  }
+    @Bean
+    IntegrationEventProcessor integrationEventProcessor(
+            IntegrationEventLogService integrationEventLogService,
+            IntegrationEventPublisher integrationEventPublisher
+    ) {
+        return new IntegrationEventProcessor(integrationEventLogService, integrationEventPublisher);
+    }
 
-  private ObjectMapper eventLogObjectMapper() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.registerModule(new JavaTimeModule());
-    return objectMapper;
-  }
+    private ObjectMapper eventLogObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
 
 }

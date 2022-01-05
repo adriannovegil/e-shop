@@ -14,10 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class OrderStatusChangedToSubmittedIntegrationEvent extends IntegrationEvent {
-  private String orderId;
-  private String orderStatus;
-  private String buyerName;
-  private Double totalPrice;
-  private List<OrderItem> orderItems;
+
+    private String orderId;
+    private String orderStatus;
+    private String buyerName;
+    private Double totalPrice;
+    private List<OrderItem> orderItems;
 
 }

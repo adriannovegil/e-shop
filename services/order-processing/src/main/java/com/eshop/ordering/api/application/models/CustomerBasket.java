@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class CustomerBasket {
+
     private String buyerId;
     private final List<BasketItem> items = new ArrayList<>();
 

@@ -9,9 +9,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CardExpirationDateValidator.class)
 public @interface CardExpirationDate {
-  String message() default "Invalid expiration date";
 
-  Class<?>[] groups() default {};
+    String message() default "Invalid expiration date";
 
-  Class<? extends Payload>[] payload() default {};
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }

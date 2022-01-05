@@ -15,22 +15,23 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-  private final WebSocketConnectInterceptor webSocketConnectInterceptor;
 
-  @Override
-  public void configureMessageBroker(MessageBrokerRegistry config) {
-    config.enableSimpleBroker("/queue");
-    config.setApplicationDestinationPrefixes("/app");
-  }
+    private final WebSocketConnectInterceptor webSocketConnectInterceptor;
 
-  @Override
-  public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/order-notifications").setAllowedOrigins("*");
-  }
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/queue");
+        config.setApplicationDestinationPrefixes("/app");
+    }
 
-  @Override
-  public void configureClientInboundChannel(ChannelRegistration registration) {
-    registration.interceptors(webSocketConnectInterceptor);
-  }
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/order-notifications").setAllowedOrigins("*");
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(webSocketConnectInterceptor);
+    }
 
 }

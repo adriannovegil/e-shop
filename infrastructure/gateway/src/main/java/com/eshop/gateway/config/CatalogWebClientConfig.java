@@ -10,10 +10,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @LoadBalancerClient(value = "catalog-query", configuration = RoundRobinLoadBalancerConfig.class)
 public class CatalogWebClientConfig {
 
-  @LoadBalanced
-  @Bean
-  WebClient.Builder catalogWebClient() {
-    return WebClient.builder();
-  }
+    @LoadBalanced
+    @Bean
+    WebClient.Builder catalogWebClient() {
+        return WebClient.builder();
+    }
 
 }

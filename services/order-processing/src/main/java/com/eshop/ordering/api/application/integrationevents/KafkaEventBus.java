@@ -12,14 +12,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class KafkaEventBus implements IntegrationEventPublisher {
-  private static final Logger logger = LoggerFactory.getLogger(IntegrationEventPublisher.class);
 
-  private final KafkaTemplate<String, IntegrationEvent> kafkaTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(IntegrationEventPublisher.class);
 
-  @Override
-  public void publish(IntegrationEventLogEntry eventLogEntry) {
-    var event = eventLogEntry.getEvent();
-    logger.info("Publishing integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    kafkaTemplate.send(eventLogEntry.getTopic(), event);
-  }
+    private final KafkaTemplate<String, IntegrationEvent> kafkaTemplate;
+
+    @Override
+    public void publish(IntegrationEventLogEntry eventLogEntry) {
+        var event = eventLogEntry.getEvent();
+        logger.info("Publishing integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        kafkaTemplate.send(eventLogEntry.getTopic(), event);
+    }
 }

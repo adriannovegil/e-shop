@@ -15,27 +15,28 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Getter
 @ToString
 public class Category extends ValueObject {
-  private final String name;
-  private final UUID categoryId;
 
-  private Category(@NotNull UUID categoryId, @NonNull String name) {
-    if (isEmpty(name)) {
-      throw new IllegalArgumentException("Category name cannot be empty");
+    private final String name;
+    private final UUID categoryId;
+
+    private Category(@NotNull UUID categoryId, @NonNull String name) {
+        if (isEmpty(name)) {
+            throw new IllegalArgumentException("Category name cannot be empty");
+        }
+        if (isNull(categoryId)) {
+            throw new IllegalArgumentException("Brand id cannot be null");
+        }
+
+        this.name = name;
+        this.categoryId = categoryId;
     }
-    if (isNull(categoryId)) {
-      throw new IllegalArgumentException("Brand id cannot be null");
+
+    public static Category of(UUID categoryId, String name) {
+        return new Category(categoryId, name);
     }
 
-    this.name = name;
-    this.categoryId = categoryId;
-  }
-
-  public static Category of(UUID categoryId, String name) {
-    return new Category(categoryId, name);
-  }
-
-  @Override
-  protected List<Object> getEqualityComponents() {
-    return List.of(name);
-  }
+    @Override
+    protected List<Object> getEqualityComponents() {
+        return List.of(name);
+    }
 }

@@ -12,15 +12,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Component
 public class AddBrandCommandHandler implements CatalogCommandHandler<AddBrandResponse, AddBrandCommand> {
-  private final BrandRepository brandRepository;
 
-  @CommandHandler
-  @Override
-  public AddBrandResponse handle(AddBrandCommand command) {
-    final var brand = brandRepository.save(Brand.of(UUID.randomUUID(), command.name()));
+    private final BrandRepository brandRepository;
 
-    return AddBrandResponse.builder()
-        .brandName(brand.getName())
-        .build();
-  }
+    @CommandHandler
+    @Override
+    public AddBrandResponse handle(AddBrandCommand command) {
+        final var brand = brandRepository.save(Brand.of(UUID.randomUUID(), command.name()));
+
+        return AddBrandResponse.builder()
+                .brandName(brand.getName())
+                .build();
+    }
 }

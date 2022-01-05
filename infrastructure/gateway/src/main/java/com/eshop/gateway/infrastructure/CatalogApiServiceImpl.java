@@ -22,39 +22,40 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class CatalogApiServiceImpl implements CatalogApiService {
-  private final WebClient.Builder catalogWebClient;
 
-  @Override
-  public Mono<CatalogItem> getCatalogItem(UUID id) {
-    return catalogWebClient.build()
-        .get()
-        .uri("lb://catalog-query/catalog/items/" + id)
-        .retrieve()
-        .bodyToMono(CatalogItem.class);
-  }
+    private final WebClient.Builder catalogWebClient;
 
-  @Override
-  public Flux<CatalogItem> getCatalogItems(List<UUID> ids) {
-    var commaSeparatedIds = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
-    return catalogWebClient.build()
-        .get()
-        .uri("lb://catalog-query/catalog/items/withids/" + commaSeparatedIds)
-        .retrieve()
-        .bodyToFlux(CatalogItem.class);
-  }
+    @Override
+    public Mono<CatalogItem> getCatalogItem(UUID id) {
+        return catalogWebClient.build()
+                .get()
+                .uri("lb://catalog-query/catalog/items/" + id)
+                .retrieve()
+                .bodyToMono(CatalogItem.class);
+    }
 
-  @Override
-  public Flux<CatalogItem> getFirst5CatalogItems() {
-    return catalogWebClient.build()
-        .get()
-        .uri("lb://catalog-query/catalog/items?pageIndex=0&pageSize=5")
-        .retrieve()
-        .bodyToMono(First5CatalogItemsResponse.class)
-        .flatMapIterable(First5CatalogItemsResponse::content);
-  }
+    @Override
+    public Flux<CatalogItem> getCatalogItems(List<UUID> ids) {
+        var commaSeparatedIds = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
+        return catalogWebClient.build()
+                .get()
+                .uri("lb://catalog-query/catalog/items/withids/" + commaSeparatedIds)
+                .retrieve()
+                .bodyToFlux(CatalogItem.class);
+    }
 
-  private static record First5CatalogItemsResponse(
-      @JsonProperty("content") List<CatalogItem> content
-  ) {
-  }
+    @Override
+    public Flux<CatalogItem> getFirst5CatalogItems() {
+        return catalogWebClient.build()
+                .get()
+                .uri("lb://catalog-query/catalog/items?pageIndex=0&pageSize=5")
+                .retrieve()
+                .bodyToMono(First5CatalogItemsResponse.class)
+                .flatMapIterable(First5CatalogItemsResponse::content);
+    }
+
+    private static record First5CatalogItemsResponse(
+            @JsonProperty("content") List<CatalogItem> content
+    ) {
+    }
 }

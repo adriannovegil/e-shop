@@ -26,95 +26,97 @@ import static com.eshop.analytics.common.Constants.*;
 @RequiredArgsConstructor
 @Configuration
 public class OrderStatisticsProcessor {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatisticsProcessor.class);
 
-  private final ObjectMapper mapper;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatisticsProcessor.class);
 
-  /**
-   * Transform submitted and cancelled order streams to streams where the key is the order id and then merge those
-   * two streams and finally, just log the order id.
-   */
-  @Bean
-  public BiConsumer<
-      KStream<String, OrderStatusChangedToSubmittedIntegrationEvent>,
-      KStream<String, OrderStatusChangedToCancelledIntegrationEvent>> orderstatistics() {
-    return (submittedOrders, cancelledOrders) -> {
-      final var submittedOrdersById = submittedOrders
-          .map((key, event) -> KeyValue.pair(event.getOrderId(), event.getOrderId()));
-      final var cancelledOrdersById = cancelledOrders
-          .map((key, event) -> KeyValue.pair(event.getOrderId(), event.getOrderId()));
+    private final ObjectMapper mapper;
 
-      submittedOrdersById.merge(cancelledOrdersById).map(KeyValue::pair)
-          .foreach((key, orderId) ->
-              logger.info("New event in Order Statistics processor. Order id {}", orderId));
-    };
-  }
+    /**
+     * Transform submitted and cancelled order streams to streams where the key
+     * is the order id and then merge those two streams and finally, just log
+     * the order id.
+     */
+    @Bean
+    public BiConsumer<
+      KStream<String, OrderStatusChangedToSubmittedIntegrationEvent>, KStream<String, OrderStatusChangedToCancelledIntegrationEvent>> orderstatistics() {
+        return (submittedOrders, cancelledOrders) -> {
+            final var submittedOrdersById = submittedOrders
+                    .map((key, event) -> KeyValue.pair(event.getOrderId(), event.getOrderId()));
+            final var cancelledOrdersById = cancelledOrders
+                    .map((key, event) -> KeyValue.pair(event.getOrderId(), event.getOrderId()));
 
-  // TODO HD The key should be an orderId!
-  /**
-   * Transform the stream of submitted orders to stream of {@link Order} by order id, store the data in the state store.
-   * This stream processor continuously write its current results to the output topic "allsubmittedorders".
-   */
-  @Bean
-  public Function<KStream<String, OrderStatusChangedToSubmittedIntegrationEvent>, KStream<String, Order>> allsubmittedorders() {
-    return (submittedOrderEventsInput) -> {
-      final var orderSerde = new JsonSerde<>(Order.class, mapper);
+            submittedOrdersById.merge(cancelledOrdersById).map(KeyValue::pair)
+                    .foreach((key, orderId)
+                            -> logger.info("New event in Order Statistics processor. Order id {}", orderId));
+        };
+    }
 
-      final var submittedOrders = submittedOrderEventsInput
-          .map((readOnlyKey, event) -> KeyValue.pair(
-              event.getOrderId(),
-              new Order(event.getOrderId(), event.getTotalPrice(), event.getOrderItems())
-          ));
+    // TODO HD The key should be an orderId!
+    /**
+     * Transform the stream of submitted orders to stream of {@link Order} by
+     * order id, store the data in the state store. This stream processor
+     * continuously write its current results to the output topic
+     * "allsubmittedorders".
+     */
+    @Bean
+    public Function<KStream<String, OrderStatusChangedToSubmittedIntegrationEvent>, KStream<String, Order>> allsubmittedorders() {
+        return (submittedOrderEventsInput) -> {
+            final var orderSerde = new JsonSerde<>(Order.class, mapper);
 
-      return submittedOrders
-          .toTable(Materialized.<String, Order, KeyValueStore<Bytes, byte[]>>as(SUBMITTED_ORDERS_STORE)
-              .withKeySerde(Serdes.String())
-              .withValueSerde(orderSerde))
-          .toStream();
-    };
-  }
+            final var submittedOrders = submittedOrderEventsInput
+                    .map((readOnlyKey, event) -> KeyValue.pair(
+                    event.getOrderId(),
+                    new Order(event.getOrderId(), event.getTotalPrice(), event.getOrderItems())
+            ));
 
-  /**
-   * Use paid orders stream and orders by id table produced in {@link OrderStatisticsProcessor#allsubmittedorders} to
-   * produce new table that contains only the paid orders. Store the paid orders by id in the state store and write its
-   * current results to the output topic "allpaidorders".
-   */
-  @Bean
-  public BiFunction<
-      KStream<String, OrderStatusChangedToPaidIntegrationEvent>,
-      KTable<String, Order>,
-      KStream<String, Order>
-      > allpaidorders() {
-    return (paidOrdersInput, allSubmittedOrders) -> {
-      final var eventSerde = new JsonSerde<>(OrderStatusChangedToPaidIntegrationEvent.class, mapper);
-      final var orderSerde = new JsonSerde<>(Order.class, mapper);
+            return submittedOrders
+                    .toTable(Materialized.<String, Order, KeyValueStore<Bytes, byte[]>>as(SUBMITTED_ORDERS_STORE)
+                            .withKeySerde(Serdes.String())
+                            .withValueSerde(orderSerde))
+                    .toStream();
+        };
+    }
 
-      final var paidOrderEventsByOrderId = paidOrdersInput
-          .map(((key, event) -> KeyValue.pair(event.getOrderId(), event)));
+    /**
+     * Use paid orders stream and orders by id table produced in
+     * {@link OrderStatisticsProcessor#allsubmittedorders} to produce new table
+     * that contains only the paid orders. Store the paid orders by id in the
+     * state store and write its current results to the output topic
+     * "allpaidorders".
+     */
+    @Bean
+    public BiFunction<
+      KStream<String, OrderStatusChangedToPaidIntegrationEvent>, KTable<String, Order>, KStream<String, Order>> allpaidorders() {
+        return (paidOrdersInput, allSubmittedOrders) -> {
+            final var eventSerde = new JsonSerde<>(OrderStatusChangedToPaidIntegrationEvent.class, mapper);
+            final var orderSerde = new JsonSerde<>(Order.class, mapper);
 
-      final var paidOrders = paidOrderEventsByOrderId.leftJoin(
-          allSubmittedOrders,
-          (event, order) -> order,
-          Joined.with(Serdes.String(), eventSerde, orderSerde));
+            final var paidOrderEventsByOrderId = paidOrdersInput
+                    .map(((key, event) -> KeyValue.pair(event.getOrderId(), event)));
 
-      // Total income
-      paidOrders
-          .groupBy((key, order) -> TOTAL_INCOME_STORE_KEY, Grouped.with(Serdes.String(), orderSerde))
-          .aggregate(
-              () -> 0D,
-              (orderId, order, sum) -> sum + order.getTotalPrice(),
-              Materialized.<String, Double, KeyValueStore<Bytes, byte[]>>as(TOTAL_INCOME_STORE)
-                  .withKeySerde(Serdes.String())
-                  .withValueSerde(Serdes.Double()));
+            final var paidOrders = paidOrderEventsByOrderId.leftJoin(
+                    allSubmittedOrders,
+                    (event, order) -> order,
+                    Joined.with(Serdes.String(), eventSerde, orderSerde));
 
-      paidOrders
-          .map((key, order) -> KeyValue.pair(key, order.getId()))
-          .toTable(Materialized.<String, String, KeyValueStore<Bytes, byte[]>>as(PAID_ORDER_IDS_STORE)
-              .withKeySerde(Serdes.String())
-              .withValueSerde(Serdes.String()));
+            // Total income
+            paidOrders
+                    .groupBy((key, order) -> TOTAL_INCOME_STORE_KEY, Grouped.with(Serdes.String(), orderSerde))
+                    .aggregate(
+                            () -> 0D,
+                            (orderId, order, sum) -> sum + order.getTotalPrice(),
+                            Materialized.<String, Double, KeyValueStore<Bytes, byte[]>>as(TOTAL_INCOME_STORE)
+                                    .withKeySerde(Serdes.String())
+                                    .withValueSerde(Serdes.Double()));
 
-      return paidOrders;
-    };
-  }
+            paidOrders
+                    .map((key, order) -> KeyValue.pair(key, order.getId()))
+                    .toTable(Materialized.<String, String, KeyValueStore<Bytes, byte[]>>as(PAID_ORDER_IDS_STORE)
+                            .withKeySerde(Serdes.String())
+                            .withValueSerde(Serdes.String()));
+
+            return paidOrders;
+        };
+    }
 
 }

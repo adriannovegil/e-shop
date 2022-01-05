@@ -10,5 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerBasket {
-  private List<BasketItem> items;
+
+    private List<BasketItem> items;
 }

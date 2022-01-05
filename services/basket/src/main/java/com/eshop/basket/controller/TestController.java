@@ -11,17 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * OR
  *
- * POST localhost:8888/monitor
- * body x-www-form-urlencoded
- * path=basket
+ * POST localhost:8888/monitor body x-www-form-urlencoded path=basket
  */
 @RestController
 @RequiredArgsConstructor
 public class TestController {
-  private final TestConfig testConfig;
 
-  @GetMapping(value = "/test")
-  public TestConfig getConfigData() {
-    return this.testConfig;
-  }
+    private final TestConfig testConfig;
+
+    @GetMapping(value = "/test")
+    public TestConfig getConfigData() {
+        return this.testConfig;
+    }
 }

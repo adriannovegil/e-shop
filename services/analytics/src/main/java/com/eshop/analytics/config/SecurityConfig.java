@@ -18,37 +18,37 @@ import static com.eshop.security.GrantedAuthoritiesUtils.scope;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private static final String PRODUCTS_ANALYTICS_SCOPE = "analytics-products";
+    private static final String PRODUCTS_ANALYTICS_SCOPE = "analytics-products";
 
-  @Value("${app.security.jwt.user-name-attribute}")
-  private String userNameAttribute;
+    @Value("${app.security.jwt.user-name-attribute}")
+    private String userNameAttribute;
 
-  @Value("${app.auth-server.issuer-uri}")
-  private String issuer;
+    @Value("${app.auth-server.issuer-uri}")
+    private String issuer;
 
-  @Value("${app.security.audience.analytics}")
-  private String analyticsAudience;
+    @Value("${app.security.audience.analytics}")
+    private String analyticsAudience;
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http
-        .authorizeRequests()
-        .antMatchers("/analytics/products/**")
-          .hasAnyAuthority(role(EshopRole.Admin), scope(PRODUCTS_ANALYTICS_SCOPE))
-        .anyRequest().hasRole(EshopRole.Admin)
-        .and()
-        .oauth2ResourceServer()
-        .jwt()
-        .decoder(jwtDecoder())
-        .jwtAuthenticationConverter(jwtAuthenticationConverter());
-  }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/analytics/products/**")
+                .hasAnyAuthority(role(EshopRole.Admin), scope(PRODUCTS_ANALYTICS_SCOPE))
+                .anyRequest().hasRole(EshopRole.Admin)
+                .and()
+                .oauth2ResourceServer()
+                .jwt()
+                .decoder(jwtDecoder())
+                .jwtAuthenticationConverter(jwtAuthenticationConverter());
+    }
 
-  private JwtDecoder jwtDecoder() {
-    return new EshopJwtDecoder(issuer, analyticsAudience);
-  }
+    private JwtDecoder jwtDecoder() {
+        return new EshopJwtDecoder(issuer, analyticsAudience);
+    }
 
-  private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
-    return new EshopJwtAuthenticationConverter(userNameAttribute);
-  }
+    private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
+        return new EshopJwtAuthenticationConverter(userNameAttribute);
+    }
 
 }

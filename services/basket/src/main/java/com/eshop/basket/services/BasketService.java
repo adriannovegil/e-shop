@@ -3,13 +3,13 @@ package com.eshop.basket.services;
 import com.eshop.basket.model.BasketCheckout;
 import com.eshop.basket.model.CustomerBasket;
 
-
 public interface BasketService {
-  CustomerBasket getBasketById(String customerId);
 
-  CustomerBasket updateBasket(CustomerBasket basket);
+    CustomerBasket getBasketById(String customerId);
 
-  void checkout(BasketCheckout basketCheckout);
+    CustomerBasket updateBasket(CustomerBasket basket);
 
-  void deleteBasketForCustomer(String customerId);
+    void checkout(BasketCheckout basketCheckout);
+
+    void deleteBasketForCustomer(String customerId);
 }

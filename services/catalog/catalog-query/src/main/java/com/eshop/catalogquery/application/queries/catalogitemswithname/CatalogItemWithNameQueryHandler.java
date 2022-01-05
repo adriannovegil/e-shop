@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class CatalogItemWithNameQueryHandler implements QueryHandler<Page<CatalogItem>, CatalogItemWithNameQuery> {
 
-  private final CatalogItemRepository catalogItemRepository;
+    private final CatalogItemRepository catalogItemRepository;
 
-  @Override
-  public Page<CatalogItem> handle(CatalogItemWithNameQuery query) {
-    final var page = PageRequest.of(query.pageIndex(), query.pageSize());
-    return catalogItemRepository.findAllByName(query.name(), page);
-  }
+    @Override
+    public Page<CatalogItem> handle(CatalogItemWithNameQuery query) {
+        final var page = PageRequest.of(query.pageIndex(), query.pageSize());
+        return catalogItemRepository.findAllByName(query.name(), page);
+    }
 }

@@ -17,39 +17,39 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-  @Value("${app.security.jwt.user-name-attribute}")
-  private String userNameAttribute;
+    @Value("${app.security.jwt.user-name-attribute}")
+    private String userNameAttribute;
 
-  @Value("${app.auth-server.issuer-uri}")
-  private String issuer;
+    @Value("${app.auth-server.issuer-uri}")
+    private String issuer;
 
-  @Value("${app.security.audience.catalog}")
-  private String catalogAudience;
+    @Value("${app.security.audience.catalog}")
+    private String catalogAudience;
 
-  @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .mvcMatcher("/catalog/**")
-        .authorizeRequests()
-        .mvcMatchers(HttpMethod.GET, "/catalog/*").permitAll()
-        .mvcMatchers(HttpMethod.POST, "/catalog/*").hasRole(EshopRole.Admin)
-        .mvcMatchers(HttpMethod.PUT, "/catalog/*").hasRole(EshopRole.Admin)
-        .mvcMatchers(HttpMethod.DELETE, "/catalog/*").hasRole(EshopRole.Admin)
-        .and()
-        .oauth2ResourceServer()
-        .jwt()
-        .decoder(jwtDecoder())
-        .jwtAuthenticationConverter(jwtAuthenticationConverter());
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .mvcMatcher("/catalog/**")
+                .authorizeRequests()
+                .mvcMatchers(HttpMethod.GET, "/catalog/*").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/catalog/*").hasRole(EshopRole.Admin)
+                .mvcMatchers(HttpMethod.PUT, "/catalog/*").hasRole(EshopRole.Admin)
+                .mvcMatchers(HttpMethod.DELETE, "/catalog/*").hasRole(EshopRole.Admin)
+                .and()
+                .oauth2ResourceServer()
+                .jwt()
+                .decoder(jwtDecoder())
+                .jwtAuthenticationConverter(jwtAuthenticationConverter());
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  private JwtDecoder jwtDecoder() {
-    return new EshopJwtDecoder(issuer, catalogAudience);
-  }
+    private JwtDecoder jwtDecoder() {
+        return new EshopJwtDecoder(issuer, catalogAudience);
+    }
 
-  private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
-    return new EshopJwtAuthenticationConverter(userNameAttribute);
-  }
+    private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
+        return new EshopJwtAuthenticationConverter(userNameAttribute);
+    }
 
 }

@@ -13,20 +13,21 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class OrderStatusChangedToPaidIntegrationEventHandler
-    implements IntegrationEventHandler<OrderStatusChangedToPaidIntegrationEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToPaidIntegrationEventHandler.class);
-  private static final String DESTINATION = "/queue/order-paid";
+        implements IntegrationEventHandler<OrderStatusChangedToPaidIntegrationEvent> {
 
-  private final SimpMessagingTemplate simpMessagingTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToPaidIntegrationEventHandler.class);
+    private static final String DESTINATION = "/queue/order-paid";
 
-  @KafkaListener(groupId = "${app.kafka.group.paidOrders}", topics = "${spring.kafka.consumer.topic.paidOrders}")
-  @Override
-  public void handle(OrderStatusChangedToPaidIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    simpMessagingTemplate.convertAndSendToUser(
-        event.getBuyerName(),
-        DESTINATION,
-        new OrderStatus(event.getOrderId(), event.getOrderStatus())
-    );
-  }
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    @KafkaListener(groupId = "${app.kafka.group.paidOrders}", topics = "${spring.kafka.consumer.topic.paidOrders}")
+    @Override
+    public void handle(OrderStatusChangedToPaidIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        simpMessagingTemplate.convertAndSendToUser(
+                event.getBuyerName(),
+                DESTINATION,
+                new OrderStatus(event.getOrderId(), event.getOrderStatus())
+        );
+    }
 }

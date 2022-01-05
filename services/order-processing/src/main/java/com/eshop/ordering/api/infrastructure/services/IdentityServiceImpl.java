@@ -7,14 +7,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @ApplicationService
 public class IdentityServiceImpl implements IdentityService {
-  @Override
-  public String getUserIdentity() {
-    return SecurityContextHolder.getContext().getAuthentication().getName();
-  }
 
-  @Override
-  public String getUserName() {
-    var user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    return user.getUsername();
-  }
+    @Override
+    public String getUserIdentity() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    @Override
+    public String getUserName() {
+        var user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getUsername();
+    }
 }

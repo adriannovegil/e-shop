@@ -5,13 +5,14 @@ import com.eshop.shared.eventhandling.IntegrationEvent;
 import java.util.List;
 
 public interface IntegrationEventLogService {
-  List<IntegrationEventLogEntry> retrieveEventLogsPendingToPublish();
 
-  void markEventAsInProgress(IntegrationEventLogEntry eventLogEntry);
+    List<IntegrationEventLogEntry> retrieveEventLogsPendingToPublish();
 
-  void markEventAsPublished(IntegrationEventLogEntry eventLogEntry);
+    void markEventAsInProgress(IntegrationEventLogEntry eventLogEntry);
 
-  void markEventAsFailed(IntegrationEventLogEntry eventLogEntry);
+    void markEventAsPublished(IntegrationEventLogEntry eventLogEntry);
 
-  void saveEvent(IntegrationEvent event, String topic);
+    void markEventAsFailed(IntegrationEventLogEntry eventLogEntry);
+
+    void saveEvent(IntegrationEvent event, String topic);
 }

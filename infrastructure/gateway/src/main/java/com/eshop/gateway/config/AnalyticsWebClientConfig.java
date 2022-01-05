@@ -14,19 +14,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 @LoadBalancerClient(value = "analytics", configuration = RoundRobinLoadBalancerConfig.class)
 public class AnalyticsWebClientConfig {
 
-  @Value("${app.security.oauth2.client.analytics.id}")
-  private String analyticsClientId;
+    @Value("${app.security.oauth2.client.analytics.id}")
+    private String analyticsClientId;
 
-  @LoadBalanced
-  @Bean
-  public WebClient.Builder analyticsWebClient(
-      ReactiveClientRegistrationRepository clientRegistrations,
-      ServerOAuth2AuthorizedClientRepository authorizedClients
-  ) {
-    final var oAuth = new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrations, authorizedClients);
-    oAuth.setDefaultClientRegistrationId(analyticsClientId);
-    return WebClient.builder()
-        .filter(oAuth);
-  }
+    @LoadBalanced
+    @Bean
+    public WebClient.Builder analyticsWebClient(
+            ReactiveClientRegistrationRepository clientRegistrations,
+            ServerOAuth2AuthorizedClientRepository authorizedClients
+    ) {
+        final var oAuth = new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrations, authorizedClients);
+        oAuth.setDefaultClientRegistrationId(analyticsClientId);
+        return WebClient.builder()
+                .filter(oAuth);
+    }
 
 }

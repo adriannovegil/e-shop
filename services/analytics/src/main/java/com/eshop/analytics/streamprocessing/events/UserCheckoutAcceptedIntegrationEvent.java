@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class UserCheckoutAcceptedIntegrationEvent extends IntegrationEvent {
-  private String userId;
-  private CustomerBasket basket;
+
+    private String userId;
+    private CustomerBasket basket;
 }

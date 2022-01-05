@@ -8,16 +8,17 @@ import java.util.UUID;
 
 @ToString
 public class PaymentMethodId extends Identifier {
-  private PaymentMethodId(UUID value) {
-    super(value);
-  }
 
-  public static PaymentMethodId of(@NonNull UUID value) {
-    return new PaymentMethodId(value);
-  }
+    private PaymentMethodId(UUID value) {
+        super(value);
+    }
 
-  public static PaymentMethodId of(@NonNull String value) {
-    return new PaymentMethodId(UUID.fromString(value));
-  }
+    public static PaymentMethodId of(@NonNull UUID value) {
+        return new PaymentMethodId(value);
+    }
+
+    public static PaymentMethodId of(@NonNull String value) {
+        return new PaymentMethodId(UUID.fromString(value));
+    }
 
 }

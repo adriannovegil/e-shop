@@ -22,36 +22,37 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @RestController
 @RequestMapping("api/v1/basket")
 public class BasketController {
-  private final UpdateBasketService updateBasketService;
-  private final UpdateBasketQuantitiesService updateBasketQuantitiesService;
-  private final AddBasketItemService addBasketItemService;
 
-  @PostMapping
-  public Mono<BasketData> updateBasket(
-      @RequestBody UpdateBasketRequest data,
-      @AuthenticationPrincipal Principal principal
-  ) {
-    if (isEmpty(data.items())) {
-      return Mono.error(new IllegalArgumentException("Empty basket"));
-    }
-    return updateBasketService.updateBasket(new UpdateBasketRequest(principal.getName(), data.items()));
-  }
+    private final UpdateBasketService updateBasketService;
+    private final UpdateBasketQuantitiesService updateBasketQuantitiesService;
+    private final AddBasketItemService addBasketItemService;
 
-  @PutMapping("items")
-  public Mono<BasketData> updateQuantities(@RequestBody UpdateBasketItemRequest data) {
-    if (isEmpty(data.updates()) || StringUtils.isEmpty(data.basketId())) {
-      return Mono.error(new IllegalArgumentException("Invalid update basket item request"));
-    }
-    return updateBasketQuantitiesService.update(data)
-        .switchIfEmpty(Mono.error(new IllegalArgumentException("Basket with id " + data.basketId() + " not found")));
-  }
-
-  @PostMapping("items")
-  public Mono<BasketData> addBasketItem(@RequestBody AddBasketItemRequest data) {
-    if (isNull(data) || isNull(data.quantity()) || data.quantity() == 0) {
-      return Mono.error(new IllegalArgumentException("Invalid basket item"));
+    @PostMapping
+    public Mono<BasketData> updateBasket(
+            @RequestBody UpdateBasketRequest data,
+            @AuthenticationPrincipal Principal principal
+    ) {
+        if (isEmpty(data.items())) {
+            return Mono.error(new IllegalArgumentException("Empty basket"));
+        }
+        return updateBasketService.updateBasket(new UpdateBasketRequest(principal.getName(), data.items()));
     }
 
-    return addBasketItemService.addBasketItem(data);
-  }
+    @PutMapping("items")
+    public Mono<BasketData> updateQuantities(@RequestBody UpdateBasketItemRequest data) {
+        if (isEmpty(data.updates()) || StringUtils.isEmpty(data.basketId())) {
+            return Mono.error(new IllegalArgumentException("Invalid update basket item request"));
+        }
+        return updateBasketQuantitiesService.update(data)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Basket with id " + data.basketId() + " not found")));
+    }
+
+    @PostMapping("items")
+    public Mono<BasketData> addBasketItem(@RequestBody AddBasketItemRequest data) {
+        if (isNull(data) || isNull(data.quantity()) || data.quantity() == 0) {
+            return Mono.error(new IllegalArgumentException("Invalid basket item"));
+        }
+
+        return addBasketItemService.addBasketItem(data);
+    }
 }

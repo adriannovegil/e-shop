@@ -4,6 +4,8 @@ import com.eshop.imageservice.models.ImageUploadRequest;
 import com.eshop.imageservice.models.ImageUploadResponse;
 
 public interface MinioService {
-  ImageUploadResponse uploadImage(ImageUploadRequest request);
-  void deleteImage(String name);
+
+    ImageUploadResponse uploadImage(ImageUploadRequest request);
+
+    void deleteImage(String name);
 }

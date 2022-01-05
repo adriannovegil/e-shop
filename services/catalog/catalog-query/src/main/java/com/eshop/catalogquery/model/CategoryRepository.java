@@ -6,5 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CategoryRepository extends CrudRepository<Category, UUID> {
-  Optional<Category> findByName(String name);
+
+    Optional<Category> findByName(String name);
 }

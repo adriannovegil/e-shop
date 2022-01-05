@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class OrderStockRejectedIntegrationEvent extends IntegrationEvent {
-  private String orderId;
-  private List<ConfirmedOrderStockItem> orderStockItems;
+
+    private String orderId;
+    private List<ConfirmedOrderStockItem> orderStockItems;
 }

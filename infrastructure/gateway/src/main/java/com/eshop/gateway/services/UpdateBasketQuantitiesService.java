@@ -14,35 +14,36 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class UpdateBasketQuantitiesService {
-  private final BasketApiService basketApiService;
 
-  public Mono<BasketData> update(UpdateBasketItemRequest data) {
-    return basketApiService.getById(data.basketId())
-        .flatMap(basket -> basketApiService.update(updateBasketItemQuantities(basket, data.updates())));
-  }
+    private final BasketApiService basketApiService;
 
-  private BasketData updateBasketItemQuantities(BasketData basket, List<UpdateBasketItemData> updates) {
-    var updatedBasketItems = basket.items().stream().map(item -> new BasketDataItem(
-        item.id(),
-        item.productId(),
-        item.productName(),
-        item.unitPrice(),
-        item.oldUnitPrice(),
-        updatedQuantity(item, updates),
-        item.pictureUrl()
-    )).collect(Collectors.toList());
+    public Mono<BasketData> update(UpdateBasketItemRequest data) {
+        return basketApiService.getById(data.basketId())
+                .flatMap(basket -> basketApiService.update(updateBasketItemQuantities(basket, data.updates())));
+    }
 
-    return new BasketData(
-        basket.buyerId(),
-        updatedBasketItems
-    );
-  }
+    private BasketData updateBasketItemQuantities(BasketData basket, List<UpdateBasketItemData> updates) {
+        var updatedBasketItems = basket.items().stream().map(item -> new BasketDataItem(
+                item.id(),
+                item.productId(),
+                item.productName(),
+                item.unitPrice(),
+                item.oldUnitPrice(),
+                updatedQuantity(item, updates),
+                item.pictureUrl()
+        )).collect(Collectors.toList());
 
-  private Integer updatedQuantity(BasketDataItem basketItem, List<UpdateBasketItemData> updates) {
-    return updates.stream()
-        .filter(u -> u.basketItemId().equals(basketItem.id()))
-        .map(UpdateBasketItemData::newQuantity)
-        .findFirst()
-        .orElse(basketItem.quantity());
-  }
+        return new BasketData(
+                basket.buyerId(),
+                updatedBasketItems
+        );
+    }
+
+    private Integer updatedQuantity(BasketDataItem basketItem, List<UpdateBasketItemData> updates) {
+        return updates.stream()
+                .filter(u -> u.basketItemId().equals(basketItem.id()))
+                .map(UpdateBasketItemData::newQuantity)
+                .findFirst()
+                .orElse(basketItem.quantity());
+    }
 }

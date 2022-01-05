@@ -10,7 +10,8 @@ import java.util.Optional;
  * as requisite for the Buyer Aggregate.
  */
 public interface BuyerRepository extends Repository<Buyer> {
-  Optional<Buyer> findByUserId(@NonNull UserId userId);
 
-  Optional<Buyer> findById(@NonNull BuyerId id);
+    Optional<Buyer> findByUserId(@NonNull UserId userId);
+
+    Optional<Buyer> findById(@NonNull BuyerId id);
 }

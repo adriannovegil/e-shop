@@ -16,53 +16,53 @@ import java.time.Duration;
 @Configuration
 public class CircuitBreakerFactoryConfig {
 
-  static final String CATALOG_CIRCUIT_BREAKER = "catalog-query";
-  static final String BASKET_CIRCUIT_BREAKER = "basket";
-  static final String ORDER_CIRCUIT_BREAKER = "order";
+    static final String CATALOG_CIRCUIT_BREAKER = "catalog-query";
+    static final String BASKET_CIRCUIT_BREAKER = "basket";
+    static final String ORDER_CIRCUIT_BREAKER = "order";
 
-  @Bean
-  public Customizer<ReactiveResilience4JCircuitBreakerFactory> catalogCustomizer(
-      CircuitBreakerRegistry circuitBreakerRegistry,
-      TimeLimiterRegistry timeLimiterRegistry
-  ) {
-    return factory -> factory.configure(builder -> builder
-            .circuitBreakerConfig(circuitBreakerConfig(CATALOG_CIRCUIT_BREAKER, circuitBreakerRegistry))
-            .timeLimiterConfig(timeLimiterConfig(CATALOG_CIRCUIT_BREAKER, timeLimiterRegistry)).build(),
-        CATALOG_CIRCUIT_BREAKER);
+    @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> catalogCustomizer(
+            CircuitBreakerRegistry circuitBreakerRegistry,
+            TimeLimiterRegistry timeLimiterRegistry
+    ) {
+        return factory -> factory.configure(builder -> builder
+                .circuitBreakerConfig(circuitBreakerConfig(CATALOG_CIRCUIT_BREAKER, circuitBreakerRegistry))
+                .timeLimiterConfig(timeLimiterConfig(CATALOG_CIRCUIT_BREAKER, timeLimiterRegistry)).build(),
+                CATALOG_CIRCUIT_BREAKER);
 
-  }
+    }
 
-  @Bean
-  public Customizer<ReactiveResilience4JCircuitBreakerFactory> basketCustomizer(CircuitBreakerRegistry circuitBreakerRegistry) {
-    return factory -> factory.configure(builder -> builder
-            .circuitBreakerConfig(circuitBreakerConfig(BASKET_CIRCUIT_BREAKER, circuitBreakerRegistry))
-            .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(3)).build()).build(),
-        BASKET_CIRCUIT_BREAKER);
-  }
+    @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> basketCustomizer(CircuitBreakerRegistry circuitBreakerRegistry) {
+        return factory -> factory.configure(builder -> builder
+                .circuitBreakerConfig(circuitBreakerConfig(BASKET_CIRCUIT_BREAKER, circuitBreakerRegistry))
+                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(3)).build()).build(),
+                BASKET_CIRCUIT_BREAKER);
+    }
 
-  @Bean
-  public Customizer<ReactiveResilience4JCircuitBreakerFactory> orderCustomizer(
-      CircuitBreakerRegistry circuitBreakerRegistry,
-      TimeLimiterRegistry timeLimiterRegistry
-  ) {
-    return factory -> factory.configure(builder -> builder
-            .circuitBreakerConfig(circuitBreakerConfig(ORDER_CIRCUIT_BREAKER, circuitBreakerRegistry))
-            .timeLimiterConfig(timeLimiterConfig(ORDER_CIRCUIT_BREAKER, timeLimiterRegistry)).build(),
-        ORDER_CIRCUIT_BREAKER);
-  }
+    @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> orderCustomizer(
+            CircuitBreakerRegistry circuitBreakerRegistry,
+            TimeLimiterRegistry timeLimiterRegistry
+    ) {
+        return factory -> factory.configure(builder -> builder
+                .circuitBreakerConfig(circuitBreakerConfig(ORDER_CIRCUIT_BREAKER, circuitBreakerRegistry))
+                .timeLimiterConfig(timeLimiterConfig(ORDER_CIRCUIT_BREAKER, timeLimiterRegistry)).build(),
+                ORDER_CIRCUIT_BREAKER);
+    }
 
-  private CircuitBreakerConfig circuitBreakerConfig(String name, CircuitBreakerRegistry circuitBreakerRegistry) {
-    return circuitBreakerRegistry
-        .find(name)
-        .orElse(CircuitBreaker.ofDefaults(name))
-        .getCircuitBreakerConfig();
-  }
+    private CircuitBreakerConfig circuitBreakerConfig(String name, CircuitBreakerRegistry circuitBreakerRegistry) {
+        return circuitBreakerRegistry
+                .find(name)
+                .orElse(CircuitBreaker.ofDefaults(name))
+                .getCircuitBreakerConfig();
+    }
 
-  private TimeLimiterConfig timeLimiterConfig(String name, TimeLimiterRegistry timeLimiterRegistry) {
-    return timeLimiterRegistry
-        .find(name)
-        .orElse(TimeLimiter.ofDefaults())
-        .getTimeLimiterConfig();
-  }
+    private TimeLimiterConfig timeLimiterConfig(String name, TimeLimiterRegistry timeLimiterRegistry) {
+        return timeLimiterRegistry
+                .find(name)
+                .orElse(TimeLimiter.ofDefaults())
+                .getTimeLimiterConfig();
+    }
 
 }

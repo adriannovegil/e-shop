@@ -15,26 +15,27 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 class OrderRepositoryImpl implements OrderRepository {
-  private final OrderEntityConverter orderEntityConverter;
-  private final ApplicationEventPublisher applicationEventPublisher;
 
-  @PersistenceContext
-  private final EntityManager entityManager;
+    private final OrderEntityConverter orderEntityConverter;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-  @Override
-  public Order save(@NonNull Order aggregateRoot) {
-    var orderEntity = orderEntityConverter.toEntity(aggregateRoot);
-    entityManager.merge(orderEntity);
+    @PersistenceContext
+    private final EntityManager entityManager;
 
-    aggregateRoot.domainEvents().forEach(applicationEventPublisher::publishEvent);
-    aggregateRoot.clearDomainEvents();
+    @Override
+    public Order save(@NonNull Order aggregateRoot) {
+        var orderEntity = orderEntityConverter.toEntity(aggregateRoot);
+        entityManager.merge(orderEntity);
 
-    return orderEntityConverter.fromEntity(orderEntity);
-  }
+        aggregateRoot.domainEvents().forEach(applicationEventPublisher::publishEvent);
+        aggregateRoot.clearDomainEvents();
 
-  @Override
-  public Optional<Order> findById(@NonNull OrderId id) {
-    return Optional.ofNullable(entityManager.find(OrderEntity.class, id.getValue()))
-        .map(orderEntityConverter::fromEntity);
-  }
+        return orderEntityConverter.fromEntity(orderEntity);
+    }
+
+    @Override
+    public Optional<Order> findById(@NonNull OrderId id) {
+        return Optional.ofNullable(entityManager.find(OrderEntity.class, id.getValue()))
+                .map(orderEntityConverter::fromEntity);
+    }
 }

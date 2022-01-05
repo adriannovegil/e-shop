@@ -19,33 +19,34 @@ import java.util.stream.Collectors;
 @EventHandler
 @RequiredArgsConstructor
 public class OrderStatusChangedToPaidDomainEventHandler implements DomainEventHandler<OrderStatusChangedToPaidDomainEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToPaidDomainEventHandler.class);
 
-  private final OrderApplicationService orderApplicationService;
-  private final IntegrationEventLogService integrationEventLogService;
-  private final KafkaTopics topics;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToPaidDomainEventHandler.class);
 
-  @EventListener
-  public void handle(OrderStatusChangedToPaidDomainEvent event) {
-    logger.info(
-        "Order with Id: {} has been successfully updated to status {}",
-        event.orderId(),
-        OrderStatus.Paid
-    );
+    private final OrderApplicationService orderApplicationService;
+    private final IntegrationEventLogService integrationEventLogService;
+    private final KafkaTopics topics;
 
-    var order = orderApplicationService.findOrder(event.orderId());
-    var buyer = orderApplicationService.findBuyerFor(order);
+    @EventListener
+    public void handle(OrderStatusChangedToPaidDomainEvent event) {
+        logger.info(
+                "Order with Id: {} has been successfully updated to status {}",
+                event.orderId(),
+                OrderStatus.Paid
+        );
 
-    var orderStockList = event.orderItems().stream()
-        .map(orderItem -> new OrderStockItem(orderItem.getProductId(), orderItem.getUnits().getValue()))
-        .collect(Collectors.toList());
+        var order = orderApplicationService.findOrder(event.orderId());
+        var buyer = orderApplicationService.findBuyerFor(order);
 
-    var orderStatusChangedToPaidIntegrationEvent = new OrderStatusChangedToPaidIntegrationEvent(
-        event.orderId().getUuid(),
-        order.getOrderStatus().getStatus(),
-        buyer.getBuyerName().getName(),
-        orderStockList);
+        var orderStockList = event.orderItems().stream()
+                .map(orderItem -> new OrderStockItem(orderItem.getProductId(), orderItem.getUnits().getValue()))
+                .collect(Collectors.toList());
 
-    integrationEventLogService.saveEvent(orderStatusChangedToPaidIntegrationEvent, topics.getPaidOrders());
-  }
+        var orderStatusChangedToPaidIntegrationEvent = new OrderStatusChangedToPaidIntegrationEvent(
+                event.orderId().getUuid(),
+                order.getOrderStatus().getStatus(),
+                buyer.getBuyerName().getName(),
+                orderStockList);
+
+        integrationEventLogService.saveEvent(orderStatusChangedToPaidIntegrationEvent, topics.getPaidOrders());
+    }
 }

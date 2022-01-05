@@ -9,11 +9,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class PipelinrConfig {
-  @SuppressWarnings("rawtypes")
-  @Bean
-  Pipeline pipeline(ObjectProvider<Command.Handler> commandHandlers, ObjectProvider<Command.Middleware> middlewares) {
-    return new Pipelinr()
-        .with(commandHandlers::stream)
-        .with(middlewares::orderedStream);
-  }
+
+    @SuppressWarnings("rawtypes")
+    @Bean
+    Pipeline pipeline(ObjectProvider<Command.Handler> commandHandlers, ObjectProvider<Command.Middleware> middlewares) {
+        return new Pipelinr()
+                .with(commandHandlers::stream)
+                .with(middlewares::orderedStream);
+    }
 }

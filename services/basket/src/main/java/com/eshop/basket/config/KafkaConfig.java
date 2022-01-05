@@ -33,91 +33,91 @@ import static org.springframework.transaction.support.AbstractPlatformTransactio
 @Configuration
 public class KafkaConfig {
 
-  private final KafkaProperties kafkaProperties;
-  private final KafkaTopics topics;
+    private final KafkaProperties kafkaProperties;
+    private final KafkaTopics topics;
 
-  // Producer
-  @Bean
-  public SeekToCurrentErrorHandler errorHandler(
-      DeadLetterPublishingRecoverer deadLetterPublishingRecoverer
-  ) {
-    return new SeekToCurrentErrorHandler(
-        deadLetterPublishingRecoverer,
-        new FixedBackOff(1000L, 2)
-    );
-  }
+    // Producer
+    @Bean
+    public SeekToCurrentErrorHandler errorHandler(
+            DeadLetterPublishingRecoverer deadLetterPublishingRecoverer
+    ) {
+        return new SeekToCurrentErrorHandler(
+                deadLetterPublishingRecoverer,
+                new FixedBackOff(1000L, 2)
+        );
+    }
 
-  /**
-   * Configure the {@link DeadLetterPublishingRecoverer} to publish poison pill bytes to a dead letter topic:
-   * "topic-name.DLT".
-   */
-  @Bean
-  public DeadLetterPublishingRecoverer deadLetterPublishingRecoverer(KafkaOperations<String, IntegrationEvent> template) {
-    return new DeadLetterPublishingRecoverer(template);
-  }
+    /**
+     * Configure the {@link DeadLetterPublishingRecoverer} to publish poison
+     * pill bytes to a dead letter topic: "topic-name.DLT".
+     */
+    @Bean
+    public DeadLetterPublishingRecoverer deadLetterPublishingRecoverer(KafkaOperations<String, IntegrationEvent> template) {
+        return new DeadLetterPublishingRecoverer(template);
+    }
 
-  @Bean
-  public Map<String, Object> producerConfigs() {
-    var props = new HashMap<>(kafkaProperties.buildProducerProperties());
-    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-    return props;
-  }
+    @Bean
+    public Map<String, Object> producerConfigs() {
+        var props = new HashMap<>(kafkaProperties.buildProducerProperties());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return props;
+    }
 
-  @Bean
-  public ProducerFactory<String, IntegrationEvent> producerFactory() {
-    var producerFactory = new DefaultKafkaProducerFactory<String, IntegrationEvent>(producerConfigs());
-    producerFactory.setTransactionIdPrefix(kafkaProperties.getProducer().getTransactionIdPrefix());
-    return producerFactory;
-  }
+    @Bean
+    public ProducerFactory<String, IntegrationEvent> producerFactory() {
+        var producerFactory = new DefaultKafkaProducerFactory<String, IntegrationEvent>(producerConfigs());
+        producerFactory.setTransactionIdPrefix(kafkaProperties.getProducer().getTransactionIdPrefix());
+        return producerFactory;
+    }
 
-  @Bean
-  public KafkaTemplate<String, IntegrationEvent> kafkaTemplate(ProducerFactory<String, IntegrationEvent> producerFactory) {
-    return new KafkaTemplate<>(producerFactory);
-  }
+    @Bean
+    public KafkaTemplate<String, IntegrationEvent> kafkaTemplate(ProducerFactory<String, IntegrationEvent> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
+    }
 
-  @Bean
-  public KafkaTransactionManager<String, IntegrationEvent> kafkaTransactionManager(
-      ProducerFactory<String, IntegrationEvent> producerFactory
-  ) {
-    var kafkaTransactionManager = new KafkaTransactionManager<>(producerFactory);
-    kafkaTransactionManager.setTransactionSynchronization(SYNCHRONIZATION_ON_ACTUAL_TRANSACTION);
-    return kafkaTransactionManager;
-  }
+    @Bean
+    public KafkaTransactionManager<String, IntegrationEvent> kafkaTransactionManager(
+            ProducerFactory<String, IntegrationEvent> producerFactory
+    ) {
+        var kafkaTransactionManager = new KafkaTransactionManager<>(producerFactory);
+        kafkaTransactionManager.setTransactionSynchronization(SYNCHRONIZATION_ON_ACTUAL_TRANSACTION);
+        return kafkaTransactionManager;
+    }
 
-  @Bean
-  public AfterRollbackProcessor<String, IntegrationEvent> kafkaAfterRollbackProcessor(
-      KafkaOperations<String, IntegrationEvent> kafkaTemplate) {
-    var dlt = new DeadLetterPublishingRecoverer(kafkaTemplate);
-    return new DefaultAfterRollbackProcessor<>(dlt);
-  }
+    @Bean
+    public AfterRollbackProcessor<String, IntegrationEvent> kafkaAfterRollbackProcessor(
+            KafkaOperations<String, IntegrationEvent> kafkaTemplate) {
+        var dlt = new DeadLetterPublishingRecoverer(kafkaTemplate);
+        return new DefaultAfterRollbackProcessor<>(dlt);
+    }
 
-  // Consumer
-  @Bean
-  public RecordMessageConverter converter() {
-    return new StringJsonMessageConverter();
-  }
+    // Consumer
+    @Bean
+    public RecordMessageConverter converter() {
+        return new StringJsonMessageConverter();
+    }
 
-  // Topics
-  @Bean
-  public NewTopic orderCheckoutsTopic() {
-    return new NewTopic(topics.getOrderCheckouts(), 1, (short) 1);
-  }
+    // Topics
+    @Bean
+    public NewTopic orderCheckoutsTopic() {
+        return new NewTopic(topics.getOrderCheckouts(), 1, (short) 1);
+    }
 
-  @Bean
-  public NewTopic ordersTopic() {
-    return new NewTopic(topics.getOrders(), 1, (short) 1);
-  }
+    @Bean
+    public NewTopic ordersTopic() {
+        return new NewTopic(topics.getOrders(), 1, (short) 1);
+    }
 
-  @Bean
-  public NewTopic productPriceChangesTopic() {
-    return new NewTopic(topics.getProductPriceChanges(), 1, (short) 1);
-  }
+    @Bean
+    public NewTopic productPriceChangesTopic() {
+        return new NewTopic(topics.getProductPriceChanges(), 1, (short) 1);
+    }
 
-  private ErrorHandlingDeserializer<Object> jsonDeserializer() {
-    final var jsonDeserializer = new JsonDeserializer<>();
-    jsonDeserializer.addTrustedPackages("*");
-    return new ErrorHandlingDeserializer<>(jsonDeserializer);
-  }
+    private ErrorHandlingDeserializer<Object> jsonDeserializer() {
+        final var jsonDeserializer = new JsonDeserializer<>();
+        jsonDeserializer.addTrustedPackages("*");
+        return new ErrorHandlingDeserializer<>(jsonDeserializer);
+    }
 
 }

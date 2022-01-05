@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class FileUploadController {
 
-  private final MinioService minioService;
+    private final MinioService minioService;
 
-  @CrossOrigin("${app.client.client-address}")
-  @PostMapping("/images/upload")
-  public ResponseEntity<ImageUploadResponse> uploadFile(
-      @RequestBody byte[] file,
-      @RequestParam("fileName") String fileName,
-      @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType
-  ) {
-    final var response = minioService.uploadImage(new ImageUploadRequest(fileName, contentType, file));
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
-  }
+    @CrossOrigin("${app.client.client-address}")
+    @PostMapping("/images/upload")
+    public ResponseEntity<ImageUploadResponse> uploadFile(
+            @RequestBody byte[] file,
+            @RequestParam("fileName") String fileName,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType
+    ) {
+        final var response = minioService.uploadImage(new ImageUploadRequest(fileName, contentType, file));
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
 }

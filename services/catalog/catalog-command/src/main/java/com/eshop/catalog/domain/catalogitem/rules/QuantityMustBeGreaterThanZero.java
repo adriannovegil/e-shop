@@ -8,12 +8,12 @@ public record QuantityMustBeGreaterThanZero(
 ) implements BusinessRule {
 
   @Override
-  public boolean broken() {
+        public boolean broken() {
     return quantity.isEmpty();
   }
 
   @Override
-  public String message() {
+        public String message() {
     return "Item units desired should be greater than zero";
   }
 }

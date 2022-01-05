@@ -12,10 +12,11 @@ import reactor.core.publisher.Flux;
 @RestController
 @RequestMapping("api/v1/catalog")
 public class CatalogController {
-  private final BestSellingProductsService bestSellingProductsService;
 
-  @GetMapping("topfive")
-  public Flux<CatalogItem> getTopFiveCatalogItems() {
-    return bestSellingProductsService.topFive();
-  }
+    private final BestSellingProductsService bestSellingProductsService;
+
+    @GetMapping("topfive")
+    public Flux<CatalogItem> getTopFiveCatalogItems() {
+        return bestSellingProductsService.topFive();
+    }
 }

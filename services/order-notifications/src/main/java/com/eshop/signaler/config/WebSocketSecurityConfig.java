@@ -8,22 +8,22 @@ import org.springframework.security.config.annotation.web.socket.AbstractSecurit
 @Configuration
 public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 
-  @Override
-  protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
-    messages
-        .simpTypeMatchers(
-            SimpMessageType.CONNECT,
-            SimpMessageType.SUBSCRIBE
-        )
-        .hasAuthority("SCOPE_order.notifications")
-        .simpTypeMatchers(SimpMessageType.DISCONNECT)
-        .authenticated()
-        .anyMessage().denyAll();
-  }
+    @Override
+    protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
+        messages
+                .simpTypeMatchers(
+                        SimpMessageType.CONNECT,
+                        SimpMessageType.SUBSCRIBE
+                )
+                .hasAuthority("SCOPE_order.notifications")
+                .simpTypeMatchers(SimpMessageType.DISCONNECT)
+                .authenticated()
+                .anyMessage().denyAll();
+    }
 
-  @Override
-  protected boolean sameOriginDisabled() {
-    return true;
-  }
+    @Override
+    protected boolean sameOriginDisabled() {
+        return true;
+    }
 
 }

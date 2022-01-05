@@ -21,43 +21,44 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class OrderingApiServiceImpl implements OrderingApiService {
-  private final WebClient.Builder orderWebClient;
 
-  @CircuitBreaker(name = "order")
-  @Override
-  public Mono<OrderData> getOrderDraft(BasketData basket) {
-    var request = new CreateOrderDraftRequest(
-        basket.buyerId(),
-        basket.items().stream().map(item -> new BasketItem(
-            item.id(),
-            item.productId(),
-            item.productName(),
-            item.unitPrice(),
-            item.oldUnitPrice(),
-            item.quantity(),
-            item.pictureUrl()
+    private final WebClient.Builder orderWebClient;
+
+    @CircuitBreaker(name = "order")
+    @Override
+    public Mono<OrderData> getOrderDraft(BasketData basket) {
+        var request = new CreateOrderDraftRequest(
+                basket.buyerId(),
+                basket.items().stream().map(item -> new BasketItem(
+                item.id(),
+                item.productId(),
+                item.productName(),
+                item.unitPrice(),
+                item.oldUnitPrice(),
+                item.quantity(),
+                item.pictureUrl()
         )).collect(Collectors.toList())
-    );
+        );
 
-    return orderWebClient.build()
-        .post()
-        .uri("lb://order-processing/orders/draft")
-        .contentType(MediaType.APPLICATION_JSON)
-        .bodyValue(request)
-        .retrieve()
-        .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(new ServiceCallFailedException()))
-        .bodyToMono(OrderDraftDTO.class)
-        .map(orderDraft -> new OrderData(
-            basket.buyerId(),
-            orderDraft.total(),
-            orderDraft.orderItems().stream().map(item -> new OrderItemData(
+        return orderWebClient.build()
+                .post()
+                .uri("lb://order-processing/orders/draft")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(new ServiceCallFailedException()))
+                .bodyToMono(OrderDraftDTO.class)
+                .map(orderDraft -> new OrderData(
+                basket.buyerId(),
+                orderDraft.total(),
+                orderDraft.orderItems().stream().map(item -> new OrderItemData(
                 item.productId(),
                 item.productName(),
                 item.unitPrice(),
                 item.discount(),
                 item.units(),
                 item.pictureUrl()
-            )).collect(Collectors.toList())
+        )).collect(Collectors.toList())
         ));
-  }
+    }
 }

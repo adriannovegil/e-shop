@@ -16,25 +16,26 @@ import org.springframework.context.event.EventListener;
 @EventHandler
 @RequiredArgsConstructor
 public class OrderShippedDomainEventHandler implements DomainEventHandler<OrderShippedDomainEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(OrderShippedDomainEventHandler.class);
 
-  private final OrderApplicationService orderApplicationService;
-  private final IntegrationEventLogService integrationEventLogService;
-  private final KafkaTopics topics;
+    private static final Logger logger = LoggerFactory.getLogger(OrderShippedDomainEventHandler.class);
 
-  @EventListener
-  public void handle(OrderShippedDomainEvent orderShippedDomainEvent) {
-    logger.info(
-        "Order with Id: {} has been successfully updated to status {}",
-        orderShippedDomainEvent.order().getId(),
-        OrderStatus.Shipped
-    );
+    private final OrderApplicationService orderApplicationService;
+    private final IntegrationEventLogService integrationEventLogService;
+    private final KafkaTopics topics;
 
-    var order = orderApplicationService.findOrder(orderShippedDomainEvent.order().getId());
-    var buyer = orderApplicationService.findBuyerFor(order);
+    @EventListener
+    public void handle(OrderShippedDomainEvent orderShippedDomainEvent) {
+        logger.info(
+                "Order with Id: {} has been successfully updated to status {}",
+                orderShippedDomainEvent.order().getId(),
+                OrderStatus.Shipped
+        );
 
-    var orderStatusChangedToCancelledIntegrationEvent = new OrderStatusChangedToShippedIntegrationEvent(
-        order.getId().getUuid(), order.getOrderStatus().getStatus(), buyer.getBuyerName().getName());
-    integrationEventLogService.saveEvent(orderStatusChangedToCancelledIntegrationEvent, topics.getShippedOrders());
-  }
+        var order = orderApplicationService.findOrder(orderShippedDomainEvent.order().getId());
+        var buyer = orderApplicationService.findBuyerFor(order);
+
+        var orderStatusChangedToCancelledIntegrationEvent = new OrderStatusChangedToShippedIntegrationEvent(
+                order.getId().getUuid(), order.getOrderStatus().getStatus(), buyer.getBuyerName().getName());
+        integrationEventLogService.saveEvent(orderStatusChangedToCancelledIntegrationEvent, topics.getShippedOrders());
+    }
 }

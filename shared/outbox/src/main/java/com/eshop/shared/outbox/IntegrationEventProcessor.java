@@ -7,26 +7,27 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 @RequiredArgsConstructor
 public class IntegrationEventProcessor {
-  private static final Logger logger = LoggerFactory.getLogger(IntegrationEventProcessor.class);
 
-  private final IntegrationEventLogService integrationEventLogService;
-  private final IntegrationEventPublisher integrationEventPublisher;
+    private static final Logger logger = LoggerFactory.getLogger(IntegrationEventProcessor.class);
 
-  @Scheduled(fixedDelay = 2000)
-  public void process() {
-    var eventLogEntries = integrationEventLogService.retrieveEventLogsPendingToPublish();
+    private final IntegrationEventLogService integrationEventLogService;
+    private final IntegrationEventPublisher integrationEventPublisher;
 
-    if (eventLogEntries.size() > 0) {
-      logger.info("{} integration events are ready to be published", eventLogEntries.size());
-      eventLogEntries.forEach(this::publish);
-    } else {
-      logger.info("No integration events found to publish");
+    @Scheduled(fixedDelay = 2000)
+    public void process() {
+        var eventLogEntries = integrationEventLogService.retrieveEventLogsPendingToPublish();
+
+        if (eventLogEntries.size() > 0) {
+            logger.info("{} integration events are ready to be published", eventLogEntries.size());
+            eventLogEntries.forEach(this::publish);
+        } else {
+            logger.info("No integration events found to publish");
+        }
     }
-  }
 
-  private void publish(IntegrationEventLogEntry eventLogEntry) {
-    integrationEventLogService.markEventAsInProgress(eventLogEntry);
-    integrationEventPublisher.publish(eventLogEntry);
-    integrationEventLogService.markEventAsPublished(eventLogEntry);
-  }
+    private void publish(IntegrationEventLogEntry eventLogEntry) {
+        integrationEventLogService.markEventAsInProgress(eventLogEntry);
+        integrationEventPublisher.publish(eventLogEntry);
+        integrationEventLogService.markEventAsPublished(eventLogEntry);
+    }
 }

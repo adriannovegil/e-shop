@@ -12,14 +12,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class OrderStartedIntegrationEventHandler implements IntegrationEventHandler<OrderStartedIntegrationEvent> {
-  private static final Logger logger = LoggerFactory.getLogger(OrderStartedIntegrationEventHandler.class);
 
-  private final BasketRepository basketRepository;
+    private static final Logger logger = LoggerFactory.getLogger(OrderStartedIntegrationEventHandler.class);
 
-  @KafkaListener(groupId = "${app.kafka.group.orders}", topics = "${spring.kafka.consumer.topic.orders}")
-  @Override
-  public void handle(OrderStartedIntegrationEvent event) {
-    logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-    basketRepository.deleteBasket(event.getUserId());
-  }
+    private final BasketRepository basketRepository;
+
+    @KafkaListener(groupId = "${app.kafka.group.orders}", topics = "${spring.kafka.consumer.topic.orders}")
+    @Override
+    public void handle(OrderStartedIntegrationEvent event) {
+        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
+        basketRepository.deleteBasket(event.getUserId());
+    }
 }

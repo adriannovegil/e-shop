@@ -13,15 +13,15 @@ import static com.eshop.analytics.common.Constants.PAYMENTS_COUNT_STORE_KEY;
 
 @Configuration
 public class PaymentStatisticsProcessor {
-  @Bean
-  public Consumer<
-      KStream<String, OrderPaymentCompletedIntegrationEvent>
-      > payments() {
-    return (paymentCompletedEvents) -> {
-      paymentCompletedEvents
-          .filter((key, event) -> "successful".equals(event.getStatus()))
-          .groupBy((key, value) -> PAYMENTS_COUNT_STORE_KEY)
-          .count(Materialized.as(PAYMENTS_COUNT_STORE));
-    };
-  }
+
+    @Bean
+    public Consumer<
+      KStream<String, OrderPaymentCompletedIntegrationEvent>> payments() {
+        return (paymentCompletedEvents) -> {
+            paymentCompletedEvents
+                    .filter((key, event) -> "successful".equals(event.getStatus()))
+                    .groupBy((key, value) -> PAYMENTS_COUNT_STORE_KEY)
+                    .count(Materialized.as(PAYMENTS_COUNT_STORE));
+        };
+    }
 }

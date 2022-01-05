@@ -10,6 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 public class ProductSellCount {
-  private UUID productId;
-  private Long sells;
+
+    private UUID productId;
+    private Long sells;
 }

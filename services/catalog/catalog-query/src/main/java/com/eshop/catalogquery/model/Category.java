@@ -14,6 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "category")
 public class Category extends DbEntity {
+
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 }

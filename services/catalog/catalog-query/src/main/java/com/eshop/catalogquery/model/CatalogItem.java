@@ -14,33 +14,32 @@ import java.util.UUID;
 @Table(name = "catalog_item")
 public class CatalogItem {
 
-  @Id
-  @Column(name = "id", nullable = false)
-  private UUID id;
+    @Id
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
-  @Column(name = "name", length = 50, nullable = false)
-  private String name;
+    @Column(name = "name", length = 50, nullable = false)
+    private String name;
 
-  @Column(name = "description")
-  private String description;
+    @Column(name = "description")
+    private String description;
 
-  @Column(name = "price", nullable = false)
-  private Double price;
+    @Column(name = "price", nullable = false)
+    private Double price;
 
-  @Column(name = "picture_file_name")
-  private String pictureFileName;
+    @Column(name = "picture_file_name")
+    private String pictureFileName;
 
-  // Quantity in stock
-  @Column(name = "available_stock")
-  private Integer availableStock;
+    // Quantity in stock
+    @Column(name = "available_stock")
+    private Integer availableStock;
 
-  @ManyToOne
-  @JoinColumn(name = "category_id")
-  private Category category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-  @ManyToOne
-  @JoinColumn(name = "brand_id")
-  private Brand brand;
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
 }
-

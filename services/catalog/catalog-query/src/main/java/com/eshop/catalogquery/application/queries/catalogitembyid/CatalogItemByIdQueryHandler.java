@@ -12,10 +12,10 @@ import java.util.Optional;
 @Component
 public class CatalogItemByIdQueryHandler implements QueryHandler<Optional<CatalogItem>, CatalogItemByIdQuery> {
 
-  private final CatalogItemRepository catalogItemRepository;
+    private final CatalogItemRepository catalogItemRepository;
 
-  @Override
-  public Optional<CatalogItem> handle(CatalogItemByIdQuery query) {
-    return catalogItemRepository.findById(query.catalogItemId());
-  }
+    @Override
+    public Optional<CatalogItem> handle(CatalogItemByIdQuery query) {
+        return catalogItemRepository.findById(query.catalogItemId());
+    }
 }
