@@ -16,4 +16,5 @@ services:
 
 networks:
   eshopnet:
-    driver: bridge
+    name: eshopnet
+    external: true

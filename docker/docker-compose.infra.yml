@@ -5,7 +5,7 @@ services:
     build: ../infrastructure/config
     restart: on-failure
     environment:
-      SPRING_PROFILES_ACTIVE: docker,native
+      SPRING_PROFILES_ACTIVE: docker
       CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
       CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
       CONFIG_KEYSTORE_PASSWORD: ${CONFIG_KEYSTORE_PASSWORD}
@@ -50,4 +50,5 @@ services:
 
 networks:
   eshopnet:
-    driver: bridge
+    name: eshopnet
+    external: true

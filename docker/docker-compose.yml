@@ -88,13 +88,14 @@ services:
       DB_SCHEMA: public
       DB_USER: keycloak
       DB_PASSWORD: dbpass
-      KEYCLOAK_IMPORT: /tmp/eshop-realm.json
+      KEYCLOAK_IMPORT: /opt/jboss/keycloak/imports/eshop-realm.json
     depends_on:
       - postgres
     volumes:
-      - ./keycloak/eshop-realm.json:/tmp/eshop-realm.json
+      - ./keycloak/eshop-realm.json:/opt/jboss/keycloak/imports/eshop-realm.json
     ports:
       - 8090:8080
+      - 8443:8443
     networks:
       - eshopnet
 
@@ -108,9 +109,10 @@ services:
     networks:
       - eshopnet
 
-networks:
-  eshopnet:
-    driver: bridge
-
 volumes:
   mysql_data:
+
+networks:
+  eshopnet:
+    name: eshopnet
+    external: true

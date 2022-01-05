@@ -10,20 +10,15 @@ spring:
   application:
     name: config
   cloud:
-    profiles:
-      active: native
     config:
       server:
         git:
-          uri: https://github.com/adriannovegil/e-shop-config
-        # Use the File System Backend to avoid git pulling. Enable "native" profile in the Config Server.
-        native:
-          searchLocations: file:///${GIT_REPO}
-
+          uri: https://github.com/adriannovegil/e-shop-config.git
+          default-label: main     
   security:
     user:
       name: ${app.config.user}
-      password: ${app.config.password}  
+      password: ${app.config.password}
 
 # Logging
 logging:
