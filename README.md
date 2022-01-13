@@ -1,11 +1,24 @@
 # e-shop
 
-This project is inspired by eShopOnContainers and it's built to demonstrate features of [Spring Cloud](https://spring.io/projects/spring-cloud) for
-implementing microservices architecture. In this project you can find examples of: Spring Cloud Config,
-Eureka Service Discovery, Spring Cloud Gateway, Spring Cloud Circuit Breaker, Resilience4j, Spring Cloud Sleuth,
-Spring Cloud Stream, Spring Kafka, Kafka Streams API, Keycloak, ...
+This project is inspired by `e-shop` that is inspired by `eShopOnContainers` and it's built to demonstrate features of [Spring Cloud](https://spring.io/projects/spring-cloud) for implementing microservices architecture.
+
+In this project you can find examples of:
+
+- Spring Cloud Config,
+- Eureka Service Discovery,
+- Spring Cloud Gateway,
+- Spring Cloud Circuit Breaker,
+- Resilience4j,
+- Spring Cloud Sleuth,
+- Spring Cloud Stream,
+- Spring Kafka,
+- Kafka Streams API,
+- Keycloak,
+- ...
 
 ## Architectural Diagram
+
+Following you can see an architectural diagram
 
 ![Assign Admin Role](docs/architecture/container-diagram.png)
 
@@ -25,102 +38,24 @@ Spring Cloud Stream, Spring Kafka, Kafka Streams API, Keycloak, ...
 - [Payment](services/payment) - Simulates a simple payment gateway.
 - [Analytics](services/analytics) - Real-time stream processing with Kafka Streams API.
 
-## How To Run
+## Build the services
 
-You need to have Maven, Java 17, Node.js and Docker. By default, Docker Desktop is set to use 2 GB runtime memory, allocated from the total available memory. We recommend setting the runtime memory to 6GB.
-
-The best way to run the services is with IDEs like IntelliJ IDEA or Eclipse. Check their documentation for more details.
-
-### Run Infrastructural Components
-
-Run all infrastructural containers(Postgres, Redis, Kafka, Keycloak authorization service) using the following command:
+First build the services with the following command:
 
 ```
-cd docker
+./mvnw clean install
+```
+
+## Run the infrastructural and business services
+
+Run all infrastructural and service containers using the following command:
+
+```
+docker-compose build
 docker-compose up
 ```
 
-### Run micro-services
-
-After you start the infrastructural components, you can run all micro-services using your
-favourite IDE. Check their corresponding documentation.
-
-### Run micro-services with Docker
-
-If you want to run the services with docker, first build the services with the following command:
-
-```
-mvn clean install
-```
-
-Then:
-
-1. Run all infrastructure services [Config](infrastructure/config), [Discovery](infrastructure/discovery),
-[API Gateway](infrastructure/gateway) using the following command:
-
-```
-cd docker
-docker-compose -f docker-compose.infra.yml build
-docker-compose -f docker-compose.infra.yml up
-```
-
-2. Run all domain services [Order Processing](services/order-processing), [Catalog](services/catalog),
-[Basket](services/basket), [Payment](services/payment), [Order Grace Period Task](services/order-grace-period-task),
-[Order Notifications](services/order-notifications), [Analytics](services/analytics) using the following command:
-
-```
-cd docker
-docker-compose -f docker-compose.services.yml build
-docker-compose -f docker-compose.services.yml up
-```
-
-### Run imaging service
-
-We use [imgproxy](https://imgproxy.net/) service to resize images on-the-fly. It is a fast and secure standalone server for resizing and converting remote images.
-
-All catalog item images are stored in [Minio](https://github.com/minio/minio). Minio is an object storage server. It is compatible with Amazon S3, so it can be used with imgproxy.
-
-The images are uploaded to Minio via [Image Service](infrastructure/image-service).
-
-If you don't run these services, the spa client won't be able to fetch catalog item images.
-
-Run imgproxy and Minio services:
-
-```
-cd docker
-docker-compose -f docker-compose.img.yml up
-```
-
-You can access Minio at http://localhost:8086, and imgproxy at http://localhost:8887.
-
-### ELK (optional)
-
-We use [ELK](https://www.elastic.co/what-is/elk-stack) for log analysis.
-
-Run ELK stack:
-
-```
-cd docker
-docker-compose -f docker-compose.elk.yml up
-```
-
-Also, you should run all services with 'elk' profile.
-
-### Zipkin (optional)
-
-[Spring Cloud Sleuth](https://spring.io/projects/spring-cloud-sleuth) and [Zipkin](https://zipkin.io/) are used for
-monitoring microservices.
-
-Run Zipkin:
-
-```
-cd docker
-docker-compose -f docker-compose.zipkin.yml up
-```
-
-To enable distributed tracing, run all services with 'distributed-tracing' profile.
-
-### Run SPA Client
+### Run SPA client
 
 The client application is implemented with angular.
 
@@ -130,21 +65,16 @@ npm install
 npm start
 ```
 
-You can access the client application at http://localhost:4200. You can stop some services such as basket, order
+You can access the client application at http://localhost:4200.
+
+You can stop some services such as basket, order
 processing, or analytics, and you will notice that you can still use the application without some of its features.
-
-## Run everything
-
-Alternatively, you can run the system as described bellow.
-
-You can run all docker containers and Spring applications by running the `./scripts/start.sh`. By default, the script
-won't start ELK and Zipkin. If you want to use ELK and Zipkin, you can run the script as:
-`./scripts/start.sh --elk --distributed-tracing`. To stop everything you can run `./scripts/stop.sh`.
 
 ## Create user
 
-Before you start using the application, you need to create a user. You can access Keycloak authorization service at
-http://localhost:8090. Login with admin/admin, go to "Users", click "Add user" and fill in the necessary data.
+Before you start using the application, you need to create a user.
+
+You can access Keycloak authorization service at http://localhost:8090. Login with `admin`/`admin`, go to "Users", click "Add user" and fill in the necessary data.
 
 ![Add User](docs/images/add-user.png)
 
@@ -152,7 +82,44 @@ After you save the user, go to "Credentials" to set a password.
 
 ![Set Password](docs/images/set-password.png)
 
-If you want to assign admin role to the user, go to "Role Mappings", select "admin" under "Available Roles" and click
-"Add selected".
+If you want to assign admin role to the user, go to "Role Mappings", select "admin" under "Available Roles" and click "Add selected".
 
 ![Assign Admin Role](docs/images/assign-admin-role.png)
+
+## References
+
+- https://github.com/dotnet-architecture/eShopOnContainers
+
+## Contributing
+
+For a complete guide to contributing to the project, see the [Contribution Guide](CONTRIBUTING.md).
+
+We welcome contributions of any kind including documentation, organization, tutorials, blog posts, bug reports, issues, feature requests, feature implementations, pull requests, answering questions on the forum, helping to manage issues, etc.
+
+The project community and maintainers are very active and helpful, and the project benefits greatly from this activity.
+
+### Reporting Issues
+
+If you believe you have found a defect in the project or its documentation, use the repository issue tracker to report the problem to the project maintainers.
+
+If you're not sure if it's a bug or not, start by asking in the discussion forum. When reporting the issue, please provide the version.
+
+### Submitting Patches
+
+The project welcomes all contributors and contributions regardless of skill or experience level.
+
+If you are interested in helping with the project, we will help you with your contribution.
+
+We want to create the best possible tool for our development teams and the best contribution experience for our developers, we have a set of guidelines which ensure that all contributions are acceptable.
+
+The guidelines are not intended as a filter or barrier to participation. If you are unfamiliar with the contribution process, the team will help you and teach you how to bring your contribution in accordance with the guidelines.
+
+For a complete guide to contributing, see the [Contribution Guide](CONTRIBUTING.md).
+
+## Code of Conduct
+
+See the [code-of-conduct.md](./code-of-conduct.md) file
+
+## License
+
+See the [LICENSE](./LICENSE) file
