@@ -20,6 +20,7 @@ services:
       - 8888:8888
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Discovery service
   discovery:
@@ -36,6 +37,7 @@ services:
       - 8761:8761
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # database for catalog query and command
   mongo:
@@ -48,6 +50,7 @@ services:
       - 27017:27017
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Database for catalog query and order processing
   postgres:
@@ -75,6 +78,7 @@ services:
       - 5432:5432
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Redis for basket service
   redis:
@@ -86,6 +90,7 @@ services:
       - 6379:6379
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Zookeeper
   zookeeper:
@@ -94,6 +99,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Kafka
   kafka:
@@ -116,6 +122,7 @@ services:
       - 9092:9092
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Keycloak autentication and authorization service
   authorization-service:
@@ -140,6 +147,7 @@ services:
       - 8443:8443
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Minio service
   minio:
@@ -156,13 +164,12 @@ services:
       - 8086:9000
     networks:
       - eshopnet
+      - observabilitysandbox
 
   createbuckets:
     image: minio/mc
     depends_on:
       - minio
-    networks:
-      - eshopnet
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add myminio http://minio:9000 mystorage mystorage;
@@ -171,6 +178,10 @@ services:
       /usr/bin/mc policy download myminio/catalog-images;
       exit 0;
       "
+    networks:
+      - eshopnet
+      - observabilitysandbox
+
   # Image proxy
   imgproxy:
     image: darthsim/imgproxy:latest
@@ -193,6 +204,7 @@ services:
       - 8887:8080
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Portainer Docker management service
   portainer:
@@ -204,6 +216,7 @@ services:
       - 9000:9000
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Services
   # ============================================================================
@@ -220,6 +233,7 @@ services:
       MONGO_PASSWORD: ${MONGO_PASSWORD}
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Catalog query service
   catalog-query:
@@ -235,6 +249,7 @@ services:
       MONGO_PASSWORD: ${MONGO_PASSWORD}
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Order proccessing service
   order-processing:
@@ -248,6 +263,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Payment service
   payment:
@@ -261,6 +277,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Basket service
   basket:
@@ -274,6 +291,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Analytics service
   analytics:
@@ -287,6 +305,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Order notifications service
   order-notifications:
@@ -300,6 +319,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # Order grace period task
   order-grace-period-task: ####
@@ -315,6 +335,7 @@ services:
       - order-processing
     networks:
       - eshopnet
+      - observabilitysandbox
 
   # System gateway
   gateway:
@@ -332,8 +353,12 @@ services:
       - 8080:8080
     networks:
       - eshopnet
+      - observabilitysandbox
 
 networks:
   eshopnet:
     name: eshopnet
+    external: true
+  observabilitysandbox:
+    name: observabilitysandbox
     external: true
