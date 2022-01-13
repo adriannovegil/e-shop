@@ -24,10 +24,8 @@ Following you can see an architectural diagram
 
 ## Services
 
-- [Config](infrastructure/config) - Centralized configuration service. You can access this service at
-  http://localhost:8888. Credentials cfguser/cfgpassword.
-- [Discovery](infrastructure/discovery) - Service registry that allows other services to find and communicate with each
-  other. You can access this service at http://localhost:8761 and use admin/admin credentials.
+- [Config](infrastructure/config) - Centralized configuration service. You can access this service at http://localhost:8888. Credentials cfguser/cfgpassword.
+- [Discovery](infrastructure/discovery) - Service registry that allows other services to find and communicate with each other. You can access this service at http://localhost:8761 and use admin/admin credentials.
 - [API Gateway](infrastructure/gateway) - API Gateway. You can access the API Gateway at http://localhost:3000.
 - [Catalog](services/catalog) - CQRS and Event Sourcing microservice, responsible for managing catalog items.
 - [Basket](services/basket) - CRUD data-driven microservice that manages user basket.
@@ -74,7 +72,7 @@ processing, or analytics, and you will notice that you can still use the applica
 
 Before you start using the application, you need to create a user.
 
-You can access Keycloak authorization service at http://localhost:8090. Login with `admin`/`admin`, go to "Users", click "Add user" and fill in the necessary data.
+You can access Keycloak authorization service at https://localhost:8443. Login with `admin`/`admin`, go to "Users", click "Add user" and fill in the necessary data.
 
 ![Add User](docs/images/add-user.png)
 
