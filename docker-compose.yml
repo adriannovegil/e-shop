@@ -1,7 +1,6 @@
 version: '3.9'
 
 services:
-
   # Infrastructure
   # ============================================================================
   # Config service
@@ -221,6 +220,34 @@ services:
   # Services
   # ============================================================================
   # Catalog command service
+  # Analytics service
+  analytics:
+    build: ./services/analytics
+    restart: on-failure
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
+      CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
+      EUREKA_USER: ${EUREKA_USER}
+      POSTGRES_USER: ${POSTGRES_USER}
+    networks:
+      - eshopnet
+      - observabilitysandbox
+
+  # Basket service
+  basket:
+    build: ./services/basket
+    restart: on-failure
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
+      CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
+      EUREKA_USER: ${EUREKA_USER}
+      POSTGRES_USER: ${POSTGRES_USER}
+    networks:
+      - eshopnet
+      - observabilitysandbox
+
   catalog-command:
     build: ./services/catalog/catalog-command
     restart: on-failure
@@ -247,6 +274,36 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       MONGO_USER: ${MONGO_USER}
       MONGO_PASSWORD: ${MONGO_PASSWORD}
+    networks:
+      - eshopnet
+      - observabilitysandbox
+
+  # Order grace period task
+  order-grace-period-task: ####
+    build: ./services/order-grace-period-task
+    restart: on-failure
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
+      CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
+      EUREKA_USER: ${EUREKA_USER}
+      POSTGRES_USER: ${POSTGRES_USER}
+    depends_on:
+      - order-processing
+    networks:
+      - eshopnet
+      - observabilitysandbox
+
+  # Order notifications service
+  order-notifications:
+    build: ./services/order-notifications
+    restart: on-failure
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
+      CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
+      EUREKA_USER: ${EUREKA_USER}
+      POSTGRES_USER: ${POSTGRES_USER}
     networks:
       - eshopnet
       - observabilitysandbox
@@ -279,60 +336,17 @@ services:
       - eshopnet
       - observabilitysandbox
 
-  # Basket service
-  basket:
-    build: ./services/basket
+  # Image service
+  payment:
+    build: ./infrastructure/image-service
     restart: on-failure
     environment:
       SPRING_PROFILES_ACTIVE: docker
       CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
       CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
       EUREKA_USER: ${EUREKA_USER}
-      POSTGRES_USER: ${POSTGRES_USER}
-    networks:
-      - eshopnet
-      - observabilitysandbox
-
-  # Analytics service
-  analytics:
-    build: ./services/analytics
-    restart: on-failure
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
-      CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
-      EUREKA_USER: ${EUREKA_USER}
-      POSTGRES_USER: ${POSTGRES_USER}
-    networks:
-      - eshopnet
-      - observabilitysandbox
-
-  # Order notifications service
-  order-notifications:
-    build: ./services/order-notifications
-    restart: on-failure
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
-      CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
-      EUREKA_USER: ${EUREKA_USER}
-      POSTGRES_USER: ${POSTGRES_USER}
-    networks:
-      - eshopnet
-      - observabilitysandbox
-
-  # Order grace period task
-  order-grace-period-task: ####
-    build: ./services/order-grace-period-task
-    restart: on-failure
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      CONFIG_SERVICE_USER: ${CONFIG_SERVICE_USER}
-      CONFIG_SERVICE_PASSWORD: ${CONFIG_SERVICE_PASSWORD}
-      EUREKA_USER: ${EUREKA_USER}
-      POSTGRES_USER: ${POSTGRES_USER}
     depends_on:
-      - order-processing
+      - minio
     networks:
       - eshopnet
       - observabilitysandbox
