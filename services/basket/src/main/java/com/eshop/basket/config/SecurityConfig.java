@@ -35,8 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .antMatcher("/basket/**")
+        http.antMatcher("/basket/**")
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
                 .antMatchers(HttpMethod.POST, "/basket/*").hasAuthority(scope(BASKET_SCOPE))
@@ -61,5 +60,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
         return new EshopJwtAuthenticationConverter(userNameAttribute);
     }
-
 }

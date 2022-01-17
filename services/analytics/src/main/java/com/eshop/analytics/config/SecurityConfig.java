@@ -31,8 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/analytics/products/**")
                 .hasAnyAuthority(role(EshopRole.Admin), scope(PRODUCTS_ANALYTICS_SCOPE))
                 .anyRequest().hasRole(EshopRole.Admin)
@@ -50,5 +49,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
         return new EshopJwtAuthenticationConverter(userNameAttribute);
     }
-
 }

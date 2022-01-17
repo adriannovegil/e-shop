@@ -1,6 +1,6 @@
 # e-shop
 
-This project is inspired by `e-shop` that is inspired by `eShopOnContainers` and it's built to demonstrate features of [Spring Cloud](https://spring.io/projects/spring-cloud) for implementing microservices architecture.
+This project is inspired by [`e-shop`](https://github.com/hdimitrieski/e-shop) that is inspired by [`eShopOnContainers`](https://github.com/dotnet-architecture/eShopOnContainers) and it's built to demonstrate features of [Spring Cloud](https://spring.io/projects/spring-cloud) for implementing microservices architecture.
 
 In this project you can find examples of:
 
@@ -86,6 +86,7 @@ If you want to assign admin role to the user, go to "Role Mappings", select "adm
 
 ## References
 
+- https://github.com/hdimitrieski/e-shop
 - https://github.com/dotnet-architecture/eShopOnContainers
 
 ## Contributing

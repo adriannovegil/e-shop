@@ -27,6 +27,11 @@ public class SecurityConfig {
         http.cors()
                 .and()
                 .csrf().disable()
+                // Actuator
+                .authorizeExchange()
+                .pathMatchers("/actuator/**").permitAll()
+                .and()
+                // API endpoints
                 .authorizeExchange()
                 .pathMatchers(HttpMethod.GET, "/api/v1/catalog/**").permitAll()
                 .pathMatchers("/api/v1/basket/*").hasAuthority(GATEWAY_SCOPE)
@@ -39,8 +44,6 @@ public class SecurityConfig {
             var token = new JwtAuthenticationConverter().convert(jwt);
             return Mono.just(new JwtAuthenticationToken(jwt, token.getAuthorities(), jwt.getClaim(userNameAttribute)));
         }));
-
         return http.build();
     }
-
 }

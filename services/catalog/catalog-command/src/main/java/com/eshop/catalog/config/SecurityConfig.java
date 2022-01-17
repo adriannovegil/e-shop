@@ -28,8 +28,7 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .mvcMatcher("/catalog/**")
+        http.mvcMatcher("/catalog/**")
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.GET, "/catalog/*").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/catalog/*").hasRole(EshopRole.Admin)
@@ -40,7 +39,6 @@ public class SecurityConfig {
                 .jwt()
                 .decoder(jwtDecoder())
                 .jwtAuthenticationConverter(jwtAuthenticationConverter());
-
         return http.build();
     }
 
@@ -51,5 +49,4 @@ public class SecurityConfig {
     private Converter<Jwt, JwtAuthenticationToken> jwtAuthenticationConverter() {
         return new EshopJwtAuthenticationConverter(userNameAttribute);
     }
-
 }

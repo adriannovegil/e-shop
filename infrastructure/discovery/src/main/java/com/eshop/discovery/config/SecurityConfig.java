@@ -31,30 +31,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .requestMatchers()
-                .antMatchers(HttpMethod.GET, "/")
-                .and()
-                .authorizeRequests()
-                .antMatchers("/").hasRole("ADMIN")
-                .and()
-                .requestMatchers()
-                .antMatchers("/eureka/**")
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN", "SYSTEM")
-                .antMatchers(HttpMethod.POST).hasRole("SYSTEM")
-                .antMatchers(HttpMethod.PUT).hasRole("SYSTEM")
-                .antMatchers(HttpMethod.DELETE).hasRole("SYSTEM")
-                .and()
-                .requestMatchers()
-                .antMatchers("/actuator/**")
-                .and()
-                .authorizeRequests()
-                .antMatchers("/actuator/**").authenticated()
-                .anyRequest().denyAll()
-                .and()
-                .httpBasic();
+      http.csrf().disable()
+              // Only admin can access the Eureka dashboard
+              .requestMatchers()
+              .antMatchers(HttpMethod.GET, "/")
+              .and()
+              .authorizeRequests()
+              .antMatchers("/").hasRole("ADMIN")
+              .and()
+              // Rest of endpoints
+              .requestMatchers()
+              .antMatchers("/eureka/**")
+              .and()
+              .authorizeRequests()
+              .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN", "SYSTEM")
+              .antMatchers(HttpMethod.POST).hasRole("SYSTEM")
+              .antMatchers(HttpMethod.PUT).hasRole("SYSTEM")
+              .antMatchers(HttpMethod.DELETE).hasRole("SYSTEM")
+              .and()
+              // Publish actuator endpoints
+              .requestMatchers()
+              .antMatchers("/actuator/**")
+              .and()
+              .authorizeRequests()
+              .antMatchers("/actuator/**").permitAll()
+              .anyRequest().denyAll()
+              .and()
+              .httpBasic();
     }
 
     @Bean
